@@ -1,3 +1,10 @@
+/**
+ * Set up <canvas> element for later use
+ * @param {Number} width expected width of the viewport
+ * @param {Number} height expected height of the viewport
+ * @param {Number} scalingFactor targets mostly window.devicePixelRatio
+ * @returns {Object} prepared DOM canvas element
+ */
 const setUpCanvas = (width, height, scalingFactor) => {
   const canvas = document.createElement('canvas')
   canvas.setAttribute('width', scalingFactor * width)
@@ -8,6 +15,14 @@ const setUpCanvas = (width, height, scalingFactor) => {
   return canvas
 }
 
+/**
+ * Compile shader
+ * @param {Object} gl WebGL context
+ * @param {Object} type shader type, one of: gl.VERTEX_SHADER, gl.FRAGMENT_SHADER
+ * @param {string} source source of the program
+ * @returns {Object|undefined} compiled shader on success, does not return on
+ * failure
+ */
 const createShader = (gl, type, source) => {
   const shader = gl.createShader(type)
   gl.shaderSource(shader, source)
@@ -19,6 +34,12 @@ const createShader = (gl, type, source) => {
   gl.deleteShader(shader)
 }
 
+/**
+ * Creates final program by combining two shaders
+ * @param {*} gl WebGL context
+ * @param {*} vertexShader compiled vertex shader
+ * @param {*} fragmentShader compiled fragment shader
+ */
 const createProgram = (gl, vertexShader, fragmentShader) => {
   const program = gl.createProgram()
   gl.attachShader(program, vertexShader)

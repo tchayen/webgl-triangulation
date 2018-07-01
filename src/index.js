@@ -1,7 +1,8 @@
 import { setUpCanvas, createShader, createProgram } from './webgl'
-
+import * as geo from './geo'
 import '../public/style.scss'
 
+debugger
 // Consts
 const width = window.innerWidth
 const height = window.innerHeight
