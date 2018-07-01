@@ -36,9 +36,9 @@ const createShader = (gl, type, source) => {
 
 /**
  * Creates final program by combining two shaders
- * @param {*} gl WebGL context
- * @param {*} vertexShader compiled vertex shader
- * @param {*} fragmentShader compiled fragment shader
+ * @param {Object} gl WebGL context
+ * @param {Object} vertexShader compiled vertex shader
+ * @param {Object} fragmentShader compiled fragment shader
  * @returns {Object|undefined} linked program on success, does not return on
  * failure
  */
