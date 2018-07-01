@@ -2,7 +2,13 @@ import { setUpCanvas, createShader, createProgram } from './webgl'
 import * as geo from './geo'
 import '../public/style.scss'
 
-debugger
+console.log(
+  geo.degreesToMeters(-77.035974, 38.898717),
+  geo.metersToPixels(...geo.degreesToMeters(-77.035974, 38.898717), 12)
+)
+
+// ...
+
 // Consts
 const width = window.innerWidth
 const height = window.innerHeight
