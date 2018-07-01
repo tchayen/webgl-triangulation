@@ -60,10 +60,32 @@ const rotation = (angleInRadians) => {
  */
 const projection = (width, height) => [2 / width, 0, 0, 0, -2 / height, 0, -1, 1, 1]
 
+/**
+ * Calculate matrix of scale-rotation-translation-projection.
+ * @param {Number} width canvas width
+ * @param {Number} height canvas height
+ * @param {Number} angle in radians
+ * @param {Number[]} translate 2D translation vector in pixels
+ * @param {Number[]} scale 2D scale vector in floats
+ */
+const calculateSRTP = (width, height, angle, translate, scale) => {
+  const projectionMatrix  = projection(width, height)
+  const translationMatrix = translation(translate[0], translate[1])
+  const rotationMatrix    = rotation(angle)
+  const scaleMatrix       = scaling(scale[0], scale[1])
+
+  let matrix = multiply(projectionMatrix, translationMatrix)
+  matrix     = multiply(matrix, rotationMatrix)
+  matrix     = multiply(matrix, scaleMatrix)
+
+  return matrix
+}
+
 export {
   multiply,
   translation,
   scaling,
   rotation,
   projection,
+  calculateSRTP,
 }

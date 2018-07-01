@@ -120,15 +120,7 @@ const drawScene = (gl, program) => {
 
   gl.uniform4fv(colorLocation, color)
 
-  const translation = Matrix.translation(translationVector[0], translationVector[1])
-  const rotation = Matrix.rotation(angleInRadians)
-  const scale = Matrix.scaling(scaleVector[0], scaleVector[1])
-  const projection = Matrix.projection(gl.canvas.clientWidth, gl.canvas.clientHeight)
-
-  // Multiply the matrices.
-  let matrix = Matrix.multiply(projection, translation)
-  matrix = Matrix.multiply(matrix, rotation)
-  matrix = Matrix.multiply(matrix, scale)
+  const matrix = Matrix.calculateSRTP(gl.canvas.clientWidth, gl.canvas.clientHeight, angleInRadians, translationVector, scaleVector)
 
   gl.uniformMatrix3fv(matrixLocation, false, matrix)
 
