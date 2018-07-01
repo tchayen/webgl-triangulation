@@ -11,11 +11,15 @@
  */
 const originShift = 2.0 * Math.PI * 6378137 / 2.0
 
-const initialResolution = originShift * 2.0 / 256.0
 /**
- * Converts longitude and latitude using WGS84 Geodetic Datum to meters using
- * Spherical Mercator projection, known oficially under EPSG:3857 codename.
- * Bounds: [-180.0, -85.06, 180.0, 85.06]
+ * Initial resolution is basis for pixel calculations
+ */
+const initialResolution = originShift * 2.0 / 256.0
+
+/**
+ * Converts longitude and latitude using **WGS84 Geodetic Datum** to meters using
+ * Spherical Mercator projection, known oficially under **EPSG:3857** codename.
+ * Bounds: `[-180.0, -85.06, 180.0, 85.06]`
  * @param {Number} long longitude
  * @param {Number} lat latitude
  */
@@ -28,7 +32,7 @@ const degreesToMeters = (long, lat) => {
 }
 
 /**
- * Converts meters from EPSG:3857 projection to WGS84 Geodetic Datum
+ * Converts meters from **EPSG:3857** projection to **WGS84 Geodetic Datum**
  * @param {Number} x meters on the X axis
  * @param {Number} y meters on the Y axis
  */
@@ -41,10 +45,10 @@ const metersToDegress = (x, y) => {
 }
 
 /**
- * Converts EPSG:3857 to pixel coordinates based on provided zoom level
- * @param {Number} x meters in EPSG:3857
- * @param {Number} y meters in EPSG:3857
- * @param {Number} zoom non-negative integer [0-18], level of zoom
+ * Converts **EPSG:3857** to pixel coordinates based on provided zoom level
+ * @param {Number} x meters in **EPSG:3857**
+ * @param {Number} y meters in **EPSG:3857**
+ * @param {Number} zoom non-negative integer `[0-18]`, level of zoom
  */
 const metersToPixels = (x, y, zoom) => {
   const resolution = initialResolution / Math.pow(2, zoom)
@@ -55,10 +59,10 @@ const metersToPixels = (x, y, zoom) => {
 }
 
 /**
- * Converts pixel coordinates to EPSG:3857 based on provided zoom level
+ * Converts pixel coordinates to **EPSG:3857** based on provided zoom level
  * @param {Number} x pixel coordinate
  * @param {Number} y pixel coordinate
- * @param {Number} zoom non-negative integer [0-18], level of zoom
+ * @param {Number} zoom non-negative integer `[0-18]`, level of zoom
  */
 const pixelsToMeters = (x, y, zoom) => {
   const resolution = initialResolution / Math.pow(2, zoom)
@@ -69,11 +73,11 @@ const pixelsToMeters = (x, y, zoom) => {
 }
 
 /**
- * Convert Open Street Map tile coordinates on a given zoom level to WGS84
+ * Convert Open Street Map tile coordinates on a given zoom level to **WGS84**
  * compliant degrees
  * @param {Number} x coordinate
  * @param {Number} y coordinate
- * @param {Number} zoom non-negative integer [0-18], level of zoom
+ * @param {Number} zoom non-negative integer `[0-18]`, level of zoom
  */
 const tileToDegrees = (x, y, zoom) => {
   const long = x / Math.pow(2, zoom) * 360.0 - 180.0
@@ -84,11 +88,11 @@ const tileToDegrees = (x, y, zoom) => {
 }
 
 /**
- * Convert WGS84 Geodetic Datum degrees to Open Street Map tile coordinates
+ * Convert **WGS84 Geodetic Datum** degrees to Open Street Map tile coordinates
  * with given zoom level
  * @param {Number} lat latitude
  * @param {Number} long longitude
- * @param {Number} zoom non-negative integer [0-18], level of zoom
+ * @param {Number} zoom non-negative integer `[0-18]`, level of zoom
  */
 const degreesToTile = (lat, long, zoom) => {
   tileX = Math.floor((long + 180.0) / 360.0 * Math.pow(2, zoom))
