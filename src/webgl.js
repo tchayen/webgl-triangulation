@@ -39,6 +39,8 @@ const createShader = (gl, type, source) => {
  * @param {*} gl WebGL context
  * @param {*} vertexShader compiled vertex shader
  * @param {*} fragmentShader compiled fragment shader
+ * @returns {Object|undefined} linked program on success, does not return on
+ * failure
  */
 const createProgram = (gl, vertexShader, fragmentShader) => {
   const program = gl.createProgram()
