@@ -1,10 +1,4 @@
-/**
- * Multiplies two given `3x3` matrices.
- * @param {Number[]} a `3x3` matrix
- * @param {Number[]} b `3x3` matrix
- * @returns {Number[]} `3x3` matrix containing result of multiplication
- */
-const multiply = (a, b) => {
+const _multiply = (a, b) => {
   const a00 = a[0 * 3 + 0]; const a01 = a[0 * 3 + 1]; const a02 = a[0 * 3 + 2]
   const a10 = a[1 * 3 + 0]; const a11 = a[1 * 3 + 1]; const a12 = a[1 * 3 + 2]
   const a20 = a[2 * 3 + 0]; const a21 = a[2 * 3 + 1]; const a22 = a[2 * 3 + 2]
@@ -26,8 +20,23 @@ const multiply = (a, b) => {
 }
 
 /**
- * @param {*} x pixels
- * @param {*} y pixels
+ * Multiply `n` matrices of size `3x3`.
+ * @param {[Number[]]} args variable number of matrices
+ */
+const multiply = (...args) => {
+  console.log(args)
+  let matrix = _multiply(args[0], args[1])
+  let i = 2
+  while (i < args.length) {
+    matrix = _multiply(matrix, args[i])
+    i += 1
+  }
+  return matrix
+}
+
+/**
+ * @param {Number} x pixels
+ * @param {Number} y pixels
  * @returns {Number[]} `3x3` translation matrix
  */
 const translation = (x, y) => [1, 0, 0, 0, 1, 0, x, y, 1]
@@ -67,18 +76,12 @@ const projection = (width, height) => [2 / width, 0, 0, 0, -2 / height, 0, -1, 1
  * @param {Number[]} scale 2D scale vector in floats
  * @param {Number} angle in radians
  */
-const calculateSRTP = (size, translate, scale, angle) => {
-  const projectionMatrix  = projection(...size)
-  const translationMatrix = translation(...translate)
-  const rotationMatrix    = rotation(angle)
-  const scaleMatrix       = scaling(...scale)
-
-  let matrix = multiply(projectionMatrix, translationMatrix)
-  matrix     = multiply(matrix, rotationMatrix)
-  matrix     = multiply(matrix, scaleMatrix)
-
-  return matrix
-}
+const calculateSRTP = (size, translate, scale, angle) => multiply(
+  projection(...size),
+  translation(...translate),
+  rotation(angle),
+  scaling(...scale),
+)
 
 export {
   multiply,

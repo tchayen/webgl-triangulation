@@ -37,36 +37,11 @@ while (i <= points.length - 2) {
 
 // ...
 
-const setGeometry = (gl) => {
-  gl.bufferData(
-      gl.ARRAY_BUFFER,
-      new Float32Array([
-          // left column
-          0, 0,
-          30, 0,
-          0, 150,
-          0, 150,
-          30, 0,
-          30, 150,
-
-          // top rung
-          30, 0,
-          100, 0,
-          30, 30,
-          30, 30,
-          100, 0,
-          100, 30,
-
-          // middle rung
-          30, 60,
-          67, 60,
-          30, 90,
-          30, 90,
-          67, 60,
-          67, 90,
-      ]),
-      gl.STATIC_DRAW)
-}
+const fLetter = new Float32Array([
+  0, 0, 30, 0, 0, 150, 0, 150, 30, 0, 30, 150,
+  30, 0, 100, 0, 30, 30, 30, 30, 100, 0, 100, 30,
+  30, 60, 67, 60, 30, 90, 30, 90, 67, 60, 67, 90,
+])
 
 let positionLocation, positionBuffer, resolutionLocation, colorLocation, matrixLocation
 
@@ -78,7 +53,7 @@ const color = [Math.random(), Math.random(), Math.random(), 1]
 /**
  *
  * @param {Object} gl WebGL context
- * @param {*} program linked shaders
+ * @param {Object} program linked shaders
  */
 const setupScene = (gl, program) => {
   positionLocation = gl.getAttribLocation(program, 'a_position')
@@ -90,14 +65,14 @@ const setupScene = (gl, program) => {
   positionBuffer = gl.createBuffer()
 
   gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer)
-  setGeometry(gl)
+  gl.bufferData(gl.ARRAY_BUFFER, fLetter, gl.STATIC_DRAW)
   gl.clearColor(0, 0, 0, 0)
 }
 
 /**
  *
  * @param {Object} gl WebGL context
- * @param {*} program linked shaders
+ * @param {Object} program linked shaders
  */
 const drawScene = (gl, program) => {
   gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight)
