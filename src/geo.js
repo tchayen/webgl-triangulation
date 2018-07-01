@@ -28,7 +28,7 @@ const degreesToMeters = (long, lat) => {
 }
 
 /**
- * Converts meters from EPSG:3857 projection to WGS84 Geodetic Datum.
+ * Converts meters from EPSG:3857 projection to WGS84 Geodetic Datum
  * @param {Number} x meters on the X axis
  * @param {Number} y meters on the Y axis
  */
@@ -68,9 +68,43 @@ const pixelsToMeters = (x, y, zoom) => {
   return [meterX, meterY]
 }
 
+/**
+ * Convert Open Street Map tile coordinates on a given zoom level to WGS84
+ * compliant degrees
+ * @param {Number} x coordinate
+ * @param {Number} y coordinate
+ * @param {Number} zoom non-negative integer [0-18], level of zoom
+ */
+const tileToDegrees = (x, y, zoom) => {
+  const long = x / Math.pow(2, zoom) * 360.0 - 180.0
+  const n = Math.PI - 2.0 * Math.PI * y / Math.pow(2, zoom)
+  const lat = 180.0 / Math.PI * Math.atan(0.5 * (Math.exp(n) - Math.exp(-n)))
+
+  return [long, lat]
+}
+
+/**
+ * Convert WGS84 Geodetic Datum degrees to Open Street Map tile coordinates
+ * with given zoom level
+ * @param {Number} lat latitude
+ * @param {Number} long longitude
+ * @param {Number} zoom non-negative integer [0-18], level of zoom
+ */
+const degreesToTile = (lat, long, zoom) => {
+  tileX = Math.floor((long + 180.0) / 360.0 * Math.pow(2, zoom))
+  tileY = Math.floor((1 - Math.log(Math.tan(lat * Math.PI / 180.0) + 1.0
+    / Math.cos(lat * Math.PI / 180.0)) / Math.PI) / 2.0 * Math.pow(2, zoom))
+
+  return [tileX, tileY]
+}
+
 export {
   degreesToMeters,
   metersToDegress,
+
   pixelsToMeters,
   metersToPixels,
+
+  tileToDegrees,
+  degreesToTile,
 }
