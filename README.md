@@ -33,3 +33,6 @@ This lib aims to help as many use cases and possible, providing only the necessa
 ## TODO
 
 - render lines
+
+## Reading list
+[Open Street Map Wiki – Quad Tiles](https://wiki.openstreetmap.org/wiki/QuadTiles)

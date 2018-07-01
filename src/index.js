@@ -2,10 +2,17 @@ import { setUpCanvas, createShader, createProgram } from './webgl'
 import * as geo from './geo'
 import '../public/style.scss'
 
-console.log(
-  geo.degreesToMeters(-77.035974, 38.898717),
-  geo.metersToPixels(...geo.degreesToMeters(-77.035974, 38.898717), 12)
-)
+const krk = [[50.0, 19.85], [50.105, 20.13]]
+krk.forEach(c => {
+  const [c1, c2] = c
+  c = [c2, c1]
+  const m = geo.degreesToMeters(...c)
+  const p = geo.metersToPixels(...m, 12)
+
+  console.log(m, p)
+})
+console.log(geo.metersToPixels(...geo.degreesToMeters(19.9484548, 50.0488673), 12))
+console.log(geo.metersToPixels(...geo.degreesToMeters(19.9954434, 50.0641602), 12))
 
 // ...
 
@@ -55,7 +62,7 @@ const stride    = 0        // 0 = move forward size * sizeof(type) each iteratio
 const offset    = 0        // start at the beginning of the buffer
 gl.vertexAttribPointer(positionAttributeLocation, size, type, normalize, stride, offset)
 
-const primitiveType = gl.TRIANGLES
+const count         = 3 // Execute vertex shader 3 times
 const arrayOffset   = 0
-const count         = 3            // Execute vertex shader 3 times
+const primitiveType = gl.TRIANGLES
 gl.drawArrays(primitiveType, arrayOffset, count)
