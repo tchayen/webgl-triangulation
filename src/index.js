@@ -70,7 +70,7 @@ const setGeometry = (gl) => {
 
 let positionLocation, positionBuffer, resolutionLocation, colorLocation, matrixLocation
 
-const translationVector = [50, 50]
+const translationVector = [500, 250]
 const angleInRadians = 2 * Math.PI * -0.12
 const scaleVector = [1, 1]
 const color = [Math.random(), Math.random(), Math.random(), 1]
@@ -120,7 +120,12 @@ const drawScene = (gl, program) => {
 
   gl.uniform4fv(colorLocation, color)
 
-  const matrix = Matrix.calculateSRTP(gl.canvas.clientWidth, gl.canvas.clientHeight, angleInRadians, translationVector, scaleVector)
+  const matrix = Matrix.calculateSRTP(
+    [gl.canvas.clientWidth, gl.canvas.clientHeight],
+    translationVector,
+    scaleVector,
+    angleInRadians,
+  )
 
   gl.uniformMatrix3fv(matrixLocation, false, matrix)
 
