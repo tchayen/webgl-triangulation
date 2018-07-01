@@ -3,10 +3,13 @@
   "version": "0.0.1",
   "description": "WebGL renderer for TopoJSON files",
   "main": "src/index.js",
-  "repository": "https://github.com/Tchayen/topojson-webgl",
   "author": {
     "name": "Tomasz Czajęcki",
     "url": "https://github.com/Tchayen"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Tchayen/topojson-osm-fetch.git"
   },
   "license": "MIT",
   "scripts": {
@@ -26,6 +29,7 @@
     "style-loader": "^0.21.0",
     "webpack": "^4.12.1",
     "webpack-cli": "^3.0.8",
-    "webpack-dev-server": "^3.1.4"
+    "webpack-dev-server": "^3.1.4",
+    "webpack-glsl-loader": "^1.0.1"
   }
 }
