@@ -65,14 +65,14 @@ const setGeometry = (gl) => {
           67, 60,
           67, 90,
       ]),
-      gl.STATIC_DRAW);
+      gl.STATIC_DRAW)
 }
 
 let positionLocation, positionBuffer, resolutionLocation, colorLocation, matrixLocation
 
-const translation = [50, 50]
-const angleInRadians = 0
-const scale = [1, 1]
+const translationVector = [50, 50]
+const angleInRadians = 2 * Math.PI * -0.12
+const scaleVector = [1, 1]
 const color = [Math.random(), Math.random(), Math.random(), 1]
 
 /**
@@ -120,13 +120,15 @@ const drawScene = (gl, program) => {
 
   gl.uniform4fv(colorLocation, color)
 
-  const translationMatrix = Matrix.translation(translation[0], translation[1])
-  const rotationMatrix = Matrix.rotation(angleInRadians)
-  const scaleMatrix = Matrix.scaling(scale[0], scale[1])
+  const translation = Matrix.translation(translationVector[0], translationVector[1])
+  const rotation = Matrix.rotation(angleInRadians)
+  const scale = Matrix.scaling(scaleVector[0], scaleVector[1])
+  const projection = Matrix.projection(gl.canvas.clientWidth, gl.canvas.clientHeight)
 
   // Multiply the matrices.
-  let matrix = Matrix.multiply(translationMatrix, rotationMatrix)
-  matrix = Matrix.multiply(matrix, scaleMatrix)
+  let matrix = Matrix.multiply(projection, translation)
+  matrix = Matrix.multiply(matrix, rotation)
+  matrix = Matrix.multiply(matrix, scale)
 
   gl.uniformMatrix3fv(matrixLocation, false, matrix)
 

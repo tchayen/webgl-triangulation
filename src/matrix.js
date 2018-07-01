@@ -1,3 +1,9 @@
+/**
+ * Multiplies two given `3x3` matrices.
+ * @param {Number[]} a `3x3` matrix
+ * @param {Number[]} b `3x3` matrix
+ * @returns {Number[]} `3x3` matrix containing result of multiplication
+ */
 const multiply = (a, b) => {
   const a00 = a[0 * 3 + 0]; const a01 = a[0 * 3 + 1]; const a02 = a[0 * 3 + 2]
   const a10 = a[1 * 3 + 0]; const a11 = a[1 * 3 + 1]; const a12 = a[1 * 3 + 2]
@@ -19,10 +25,24 @@ const multiply = (a, b) => {
   ]
 }
 
-const translation = (tx, ty) => [1, 0, 0, 0, 1, 0, tx, ty, 1]
+/**
+ * @param {*} x pixels
+ * @param {*} y pixels
+ * @returns {Number[]} `3x3` translation matrix
+ */
+const translation = (x, y) => [1, 0, 0, 0, 1, 0, x, y, 1]
 
-const scaling = (sx, sy) => [sx, 0, 0, 0, sy, 0, 0, 0, 1]
+/**
+ * @param {Number} x scaling factor
+ * @param {Number} y scaling factor
+ * @returns {Number[]} `3x3` scale matrix by given factors
+ */
+const scaling = (x, y) => [x, 0, 0, 0, y, 0, 0, 0, 1]
 
+/**
+ * @param {Number} angleInRadians
+ * @returns {Number[]} `3x3` rotation matrix
+ */
 const rotation = (angleInRadians) => {
   const c = Math.cos(angleInRadians)
   const s = Math.sin(angleInRadians)
@@ -33,9 +53,17 @@ const rotation = (angleInRadians) => {
   ]
 }
 
+/**
+ * **Note:** This matrix flips the Y axis so that 0 is at the top.
+ * @param {Number} width pixels
+ * @param {Number} height pixels
+ */
+const projection = (width, height) => [2 / width, 0, 0, 0, -2 / height, 0, -1, 1, 1]
+
 export {
   multiply,
   translation,
   scaling,
   rotation,
+  projection,
 }
