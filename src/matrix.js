@@ -21,7 +21,7 @@ const _multiply = (a, b) => {
 
 /**
  * Multiply `n` matrices of size `3x3`.
- * @param {[Number[]]} args variable number of matrices
+ * @param {Number[][]} args variable number of matrices
  */
 const multiply = (...args) => {
   let matrix = _multiply(args[0], args[1])

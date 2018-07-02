@@ -1,9 +1,10 @@
 /**
  *
- * @param {[Number[]]} points array of 2D points
+ * @param {Number[][]} points array of 2D points
+ * @param {Number} width width of the line
  * @returns {Number[]} array of triangle coordinates
  */
-const triangularizeLine = points => {
+const triangularizeLine = (points, width) => {
   const triangles = []
   const addVec2 = (a, b) => [a[0] + b[0], a[1] + b[1]]
   let i = 0
@@ -11,7 +12,7 @@ const triangularizeLine = points => {
     const dx = points[i + 1][0] - points[i][0]
     const dy = points[i + 1][1] - points[i][1]
 
-    const length = Math.sqrt(dx * dx + dy * dy) / 4.0
+    const length = Math.sqrt(dx * dx + dy * dy) / width / 2.0
 
     const n1 = [dy / length, -dx / length]
     const n2 = [-dy / length, dx / length]
