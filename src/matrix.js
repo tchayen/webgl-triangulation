@@ -24,7 +24,6 @@ const _multiply = (a, b) => {
  * @param {[Number[]]} args variable number of matrices
  */
 const multiply = (...args) => {
-  console.log(args)
   let matrix = _multiply(args[0], args[1])
   let i = 2
   while (i < args.length) {
@@ -55,11 +54,7 @@ const scaling = (x, y) => [x, 0, 0, 0, y, 0, 0, 0, 1]
 const rotation = (angleInRadians) => {
   const c = Math.cos(angleInRadians)
   const s = Math.sin(angleInRadians)
-  return [
-    c,-s, 0,
-    s, c, 0,
-    0, 0, 1,
-  ]
+  return [c,-s, 0, s, c, 0, 0, 0, 1]
 }
 
 /**

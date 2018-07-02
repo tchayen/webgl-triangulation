@@ -20,20 +20,9 @@ const fragment = require('./shaders/fragment.glsl')
 
 // ...
 
-const points = [[1, 2], [2, 4], [4, 3], [4, 1]]
+const points = [[100, 200], [130, 300], [200, 400], [260, 350], [300, 310], [400, 300], [400, 100], [460, 120], [500, 200], [600, 300]]
 
-let i = 0
-while (i <= points.length - 2) {
-  const dx = points[i + 1][0] - points[i][0]
-  const dy = points[i + 1][1] - points[i][1]
-
-  const n1 = [dy, -dx]
-  const n2 = [-dy, dx]
-
-  console.log(points[i], n1, n2)
-
-  i += 1
-}
+const triangles = Geometry.triangularizeLine(points)
 
 // ...
 
@@ -45,8 +34,8 @@ const fLetter = new Float32Array([
 
 let positionLocation, positionBuffer, resolutionLocation, colorLocation, matrixLocation
 
-const translationVector = [500, 250]
-const angleInRadians = 2 * Math.PI * -0.12
+const translationVector = [0, 0]
+const angleInRadians = 0
 const scaleVector = [1, 1]
 const color = [Math.random(), Math.random(), Math.random(), 1]
 
@@ -65,7 +54,7 @@ const setupScene = (gl, program) => {
   positionBuffer = gl.createBuffer()
 
   gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer)
-  gl.bufferData(gl.ARRAY_BUFFER, fLetter, gl.STATIC_DRAW)
+  gl.bufferData(gl.ARRAY_BUFFER, triangles, gl.STATIC_DRAW)
   gl.clearColor(0, 0, 0, 0)
 }
 
@@ -104,7 +93,7 @@ const drawScene = (gl, program) => {
 
   gl.uniformMatrix3fv(matrixLocation, false, matrix)
 
-  const count         = 18 // Execute vertex shader n times
+  const count         = 6 * (points.length - 1) // Execute vertex shader n times
   const arrayOffset   = 0
   const primitiveType = gl.TRIANGLES
   gl.drawArrays(primitiveType, arrayOffset, count)
