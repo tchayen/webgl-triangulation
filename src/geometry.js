@@ -54,27 +54,30 @@ const triangulateLineMiter = (points, width) => {
   const triangles = []
   let dx = [], dy = [], n = [], miter = []
 
-  // uses simple calculation of 90° rotation
-  const calculateNormals = () => [
-    Vector.normalize([dy[1], -dx[1]]),
-    Vector.normalize([-dy[1], dx[1]]),
+  // Uses simple calculation of 90° rotation.
+  const calculateNormals = (x, y) => [
+    Vector.normalize([y, -x]),
+    Vector.normalize([-y, x]),
   ]
 
-  // Calculate first point (being an edge case)
+  // Calculate first point (being an edge case).
   dx[1] = points[1][0] - points[0][0]
   dy[1] = points[1][1] - points[0][1]
-  n[1] = calculateNormals()
+  n[1] = calculateNormals(dx[1], dy[1])
+  // Use first normal as a 'neutral element' for miter join.
   miter[1] = Vector.scale(n[1][0], width)
 
   let i = 1
   while (i < points.length - 1) {
+    // Shift calculated values.
     dx[0] = dx[1]; dy[0] = dy[1]; n[0] = n[1]; miter[0] = miter[1]
 
     dx[1] = points[i + 1][0] - points[i][0]
     dy[1] = points[i + 1][1] - points[i][1]
 
-    n[1] = calculateNormals()
+    n[1] = calculateNormals(dx[1], dy[1])
 
+    // Find tangent vector to both lines in the middle point.
     const tangent = Vector.normalize(
       Vector.add2(
         Vector.normalize(Vector.sub2(points[i + 1], points[i])),
@@ -82,13 +85,14 @@ const triangulateLineMiter = (points, width) => {
       )
     )
 
+    // Miter vector is perpendicular to the tangent and crosses extensions of
+    // normal-translated lines in miter join points.
     const unitMiter = [-tangent[1], tangent[0]]
 
-    // Choice of normal is arbitrary, each of them would work
+    // Length of the miter vector projected onto one of the normals.
+    // Choice of normal is arbitrary, each of them would work.
     const miterLength = width / Vector.dot(unitMiter, n[0][0])
     miter[1] = Vector.scale(unitMiter, miterLength)
-
-    console.log(points[i - 1], points[i], points[i + 1], tangent, miter)
 
     triangles.push(
       ...Vector.sub2(points[i], miter[1]),
@@ -103,7 +107,7 @@ const triangulateLineMiter = (points, width) => {
   }
 
   const size = points.length
-
+  // Use last normal as another 'neutral element' for miter join.
   triangles.push(
     ...Vector.sub2(points[size - 1], Vector.scale(n[1][0], width)),
     ...Vector.sub2(points[size - 2], miter[1]),
