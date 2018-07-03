@@ -21,12 +21,12 @@ const addTriangles = (triangles, p1, p2, normals, width) => {
 }
 
 /**
- *
+ * Triangulates line with no joins (using only normals).
  * @param {Number[][]} points array of 2D points
  * @param {Number} width width of the line
  * @returns {Number[]} array of triangle coordinates
  */
-const triangularizeLine = (points, width) => {
+const triangulateLine = (points, width) => {
   const triangles = []
   let i = 0
   while (i <= points.length - 2) {
@@ -45,12 +45,12 @@ const triangularizeLine = (points, width) => {
 }
 
 /**
- * Triangularizes line
+ * Triangulates line using miter joins.
  * @param {Number[][]} points array of 2D points
  * @param {Number[]} width width of the line
  * @returns {Number[]} array of triangle coordinates
  */
-const triangularizeLineMiter = (points, width) => {
+const triangulateLineMiter = (points, width) => {
   const triangles = []
   let dx = [], dy = [], n = [], miter = []
 
@@ -118,6 +118,6 @@ const triangularizeLineMiter = (points, width) => {
 }
 
 export {
-  triangularizeLine,
-  triangularizeLineMiter,
+  triangulateLine,
+  triangulateLineMiter,
 }

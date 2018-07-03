@@ -25,7 +25,7 @@ const points = [[100, 100], [100, 200],
                 [300, 310], [400, 300],
                 [400, 100], [600, 120]]
 
-const triangles = Geometry.triangularizeLineMiter(points, 12.0)
+const triangles = Geometry.triangulateLineMiter(points, 12.0)
 
 // ...
 
