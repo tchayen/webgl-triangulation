@@ -13,7 +13,7 @@ const triangularizeLine = (points, width) => {
     const dx = points[i + 1][0] - points[i][0]
     const dy = points[i + 1][1] - points[i][1]
 
-    const length = Math.sqrt(dx * dx + dy * dy) / width / 2.0
+    const length = Math.sqrt(dx * dx + dy * dy) / width * 2.0
 
     const n1 = [dy / length, -dx / length]
     const n2 = [-dy / length, dx / length]
@@ -40,42 +40,39 @@ const triangularizeLine = (points, width) => {
  */
 const triangularizeLineMiter = (points, width) => {
   const triangles = []
-  let dx = [], dy = [], length = [], n = []
+  let dx = [], dy = [], n = []
 
   const addTriangles = (p1, p2, n) => {
     triangles.push(
-      ...Vector.add2(p2, n[1]),
-      ...Vector.add2(p1, n[1]),
-      ...Vector.add2(p1, n[0]),
+      ...Vector.add2(p2, Vector.setLength(n[1], width)),
+      ...Vector.add2(p1, Vector.setLength(n[1], width)),
+      ...Vector.add2(p1, Vector.setLength(n[0], width)),
 
-      ...Vector.add2(p1, n[0]),
-      ...Vector.add2(p2, n[0]),
-      ...Vector.add2(p2, n[1]),
+      ...Vector.add2(p1, Vector.setLength(n[0], width)),
+      ...Vector.add2(p2, Vector.setLength(n[0], width)),
+      ...Vector.add2(p2, Vector.setLength(n[1], width)),
     )
   }
 
-  const calculateN = () => [ // uses simple calculation of 90° rotation
-    [dy[1] / length[1], -dx[1] / length[1]],
-    [-dy[1] / length[1], dx[1] / length[1]],
+  // uses simple calculation of 90° rotation
+  const calculateNormals = () => [
+    Vector.normalize([dy[1], -dx[1]]),
+    Vector.normalize([-dy[1], dx[1]]),
   ]
-
-  const calculateLength = () => Math.sqrt(dx[1] * dx[1] + dy[1] * dy[1]) / 4.0
 
   // Calculate first point (being an edge case)
   dx[1] = points[1][0] - points[0][0]
   dy[1] = points[1][1] - points[0][1]
-  length[1] = calculateLength()
-  n[1] = calculateN()
+  n[1] = calculateNormals()
 
   let i = 1
   while (i < points.length - 2) {
-    dx[0] = dx[1]; dy[0] = dy[1]; length[0] = length[1], n[0] = n[1]
+    dx[0] = dx[1]; dy[0] = dy[1]; n[0] = n[1]
 
     dx[1] = points[i + 1][0] - points[i][0]
     dy[1] = points[i + 1][1] - points[i][1]
 
-    length[1] = calculateLength()
-    n[1] = calculateN()
+    n[1] = calculateNormals()
 
     const tangent = Vector.normalize(
       Vector.add2(
@@ -84,19 +81,21 @@ const triangularizeLineMiter = (points, width) => {
       )
     )
 
-    const miter = (-tangent[1], tangent[0])
+    const miter = [-tangent[1], tangent[0]]
 
     // Choice of normal is arbitrary, each of them would work
     const miterLength = width / Vector.dot(miter, n[0][0])
 
-    triangles.push(
-      ...Vector.add2(points[i], n[0][1]),
-      ...Vector.add2(points[i - 1], n[0][1]),
-      ...Vector.add2(points[i - 1], n[0][0]),
+    console.log(points[i - 1], points[i], points[i + 1], tangent, miter, miterLength)
 
-      ...Vector.add2(points[i - 1], n[0][0]),
-      ...Vector.add2(points[i], n[0][0]),
-      ...Vector.add2(points[i], n[0][1]),
+    triangles.push(
+      ...Vector.add2(points[i], Vector.setLength(n[0][1], width)),
+      ...Vector.add2(points[i - 1], Vector.setLength(n[0][1], width)),
+      ...Vector.add2(points[i - 1], Vector.setLength(n[0][0], width)),
+
+      ...Vector.add2(points[i - 1], Vector.setLength(n[0][0], width)),
+      ...Vector.add2(points[i], Vector.setLength(n[0][0], width)),
+      ...Vector.add2(points[i], Vector.setLength(n[0][1], width)),
     )
     i += 1
   }
@@ -107,8 +106,7 @@ const triangularizeLineMiter = (points, width) => {
 
   dx[1] = points[size - 1][0] - points[size - 2][0]
   dy[1] = points[size - 1][1] - points[size - 2][1]
-  length[1] = calculateLength()
-  n[1] = calculateN()
+  n[1] = calculateNormals()
 
   addTriangles(points[size - 2], points[size - 1], n[1])
 

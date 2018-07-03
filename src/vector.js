@@ -26,6 +26,20 @@ const normalize = v => {
 }
 
 /**
+ * Scales vector to achieve desired length.
+ * @param {Number[]} v 2D vector
+ * @param {Number} l desired length
+ */
+const setLength = (v, l) => {
+  let w
+  const norm = Math.sqrt(v[0] * v[0] + v[1] * v[1])
+  if (norm != 0) {
+    w = [v[0] / norm * l, v[1] / norm * l]
+    return w
+  }
+}
+
+/**
  * Calculates dot product of two 2D vectors.
  * @param {Number[]} a 2D vector
  * @param {Number[]} b 2D vector
@@ -36,5 +50,6 @@ export {
   add2,
   sub2,
   normalize,
+  setLength,
   dot,
 }
