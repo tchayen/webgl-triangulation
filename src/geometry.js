@@ -67,7 +67,7 @@ const triangularizeLineMiter = (points, width) => {
   miter[1] = Vector.scale(n[1][0], width)
 
   let i = 1
-  while (i < points.length - 2) {
+  while (i < points.length - 1) {
     dx[0] = dx[1]; dy[0] = dy[1]; n[0] = n[1]; miter[0] = miter[1]
 
     dx[1] = points[i + 1][0] - points[i][0]
@@ -87,7 +87,6 @@ const triangularizeLineMiter = (points, width) => {
     // Choice of normal is arbitrary, each of them would work
     const miterLength = width / Vector.dot(unitMiter, n[0][0])
     miter[1] = Vector.scale(unitMiter, miterLength)
-    // const reversedMiter = [miter[0], -miter[1]]
 
     console.log(points[i - 1], points[i], points[i + 1], tangent, miter)
 
@@ -103,15 +102,17 @@ const triangularizeLineMiter = (points, width) => {
     i += 1
   }
 
-  // Process the last two points
   const size = points.length
-  addTriangles(triangles, points[size - 3], points[size - 2], n[1], width)
 
-  dx[1] = points[size - 1][0] - points[size - 2][0]
-  dy[1] = points[size - 1][1] - points[size - 2][1]
-  n[1] = calculateNormals()
+  triangles.push(
+    ...Vector.sub2(points[size - 1], Vector.scale(n[1][0], width)),
+    ...Vector.sub2(points[size - 2], miter[1]),
+    ...Vector.add2(points[size - 2], miter[1]),
 
-  addTriangles(triangles, points[size - 2], points[size - 1], n[1], width)
+    ...Vector.add2(points[size - 2], miter[1]),
+    ...Vector.add2(points[size - 1], Vector.scale(n[1][0], width)),
+    ...Vector.sub2(points[size - 1], Vector.scale(n[1][0], width)),
+  )
 
   return new Float32Array(triangles)
 }

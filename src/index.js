@@ -21,10 +21,9 @@ const fragment = require('./shaders/fragment.glsl')
 // ...
 
 const points = [[100, 100], [100, 200],
-                [200, 300], [260, 350],
+                [200, 320], [260, 350],
                 [300, 310], [400, 300],
-                [400, 100], [460, 120],
-                [500, 200], [600, 300]]
+                [400, 100], [600, 120]]
 
 const triangles = Geometry.triangularizeLineMiter(points, 12.0)
 
