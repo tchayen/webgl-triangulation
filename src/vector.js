@@ -26,15 +26,15 @@ const normalize = v => {
 }
 
 /**
- * Scales vector to achieve desired length.
+ * Scales vector by given factor.
  * @param {Number[]} v 2D vector
- * @param {Number} l desired length
+ * @param {Number} s scale factor
  */
-const setLength = (v, l) => {
+const scale = (v, s) => {
   let w
   const norm = Math.sqrt(v[0] * v[0] + v[1] * v[1])
   if (norm != 0) {
-    w = [v[0] / norm * l, v[1] / norm * l]
+    w = [v[0] / norm * s, v[1] / norm * s]
     return w
   }
 }
@@ -50,6 +50,6 @@ export {
   add2,
   sub2,
   normalize,
-  setLength,
+  scale,
   dot,
 }
