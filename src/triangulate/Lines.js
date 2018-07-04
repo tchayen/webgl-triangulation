@@ -50,6 +50,8 @@ const normal = (points, width) => {
 
 /**
  * Triangulates line using miter joins. Has no vertex overhead.
+ * For a bit more explanation and helpful sketches, visit:
+ * https://forum.libcinder.org/topic/smooth-thick-lines-using-geometry-shader
  * @param {Number[][]} points array of 2D points
  * @param {Number[]} width width of the line
  * @returns {Number[]} array of triangle coordinates
