@@ -45,7 +45,7 @@ const normal = (points, width) => {
 }
 
 /**
- * Triangulates line using miter joins.
+ * Triangulates line using miter joins. Has no vertex overhead.
  * @param {Number[][]} points array of 2D points
  * @param {Number[]} width width of the line
  * @returns {Number[]} array of triangle coordinates
@@ -127,6 +127,29 @@ const miter = (points, width) => {
   )
 
   return new Float32Array(triangles)
+}
+
+/**
+ * Triangulates line using bevel joins. Adds one triangle per join.
+ * @param {Number[][]} points array of 2D points
+ * @param {Number[]} width width of the line
+ * @returns {Number[]} array of triangle coordinates
+ */
+const bevel = (points, width) => {
+  throw 'Not implemented'
+}
+
+/**
+ * Triangulates line using rounded joins. Has biggest vertex overhead, adds
+ * `n + 1` triangles where `n` is number of triangle fan divisions.
+ * @param {Number[][]} points array of 2D points
+ * @param {Number[]} width width of the line
+ * @param {Number} divisions specifies number of divisions for creating triangle
+ * fan. Has minimum of `1` and no maximum. Increase carefully.
+ * @returns {Number[]} array of triangle coordinates
+ */
+const round = (points, divisions, width) => {
+  throw 'Not implemented'
 }
 
 export {
