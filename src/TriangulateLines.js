@@ -1,4 +1,4 @@
-import * as Vector from './vector'
+import * as Vector from './Vector'
 
 /**
  * Pushes coordinates of two triangles (line segment) to given `triangles` array.
@@ -26,19 +26,19 @@ const addTriangles = (triangles, p1, p2, normals, width) => {
  * @param {Number} width width of the line
  * @returns {Number[]} array of triangle coordinates
  */
-const triangulateLine = (points, width) => {
+const normal = (points, width) => {
   const triangles = []
   let i = 0
   while (i <= points.length - 2) {
     const dx = points[i + 1][0] - points[i][0]
     const dy = points[i + 1][1] - points[i][1]
 
-    const n = [
+    const normals = [
       Vector.normalize([dy, -dx]),
       Vector.normalize([-dy, dx]),
     ]
 
-    addTriangles(triangles, points[i], points[i + 1], n, width)
+    addTriangles(triangles, points[i], points[i + 1], normals, width)
     i += 1
   }
   return new Float32Array(triangles)
@@ -50,7 +50,11 @@ const triangulateLine = (points, width) => {
  * @param {Number[]} width width of the line
  * @returns {Number[]} array of triangle coordinates
  */
-const triangulateLineMiter = (points, width) => {
+const miter = (points, width) => {
+  // Make width equal to half of itself since it will used as distance from
+  // middle of the line
+  width /= 2.0
+
   const triangles = []
   let dx = [], dy = [], n = [], miter = []
 
@@ -60,10 +64,14 @@ const triangulateLineMiter = (points, width) => {
     Vector.normalize([-y, x]),
   ]
 
+  const lineDistance = (p0, p1) => [p1[0] - p0[0], p1[1] - p0[1]]
+
   // Calculate first point (being an edge case).
   dx[1] = points[1][0] - points[0][0]
   dy[1] = points[1][1] - points[0][1]
+
   n[1] = calculateNormals(dx[1], dy[1])
+
   // Use first normal as a 'neutral element' for miter join.
   miter[1] = Vector.scale(n[1][0], width)
 
@@ -122,6 +130,6 @@ const triangulateLineMiter = (points, width) => {
 }
 
 export {
-  triangulateLine,
-  triangulateLineMiter,
+  normal,
+  miter,
 }

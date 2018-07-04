@@ -1,7 +1,7 @@
-import * as Utils from './webgl'
-import * as Geography from './geography'
-import * as Geometry from './geometry'
-import * as Matrix from './matrix'
+import * as WebGLUtils from './WebGLUtils'
+import * as Geography from './Geography'
+import * as TriangulateLines from './TriangulateLines'
+import * as Matrix from './Matrix'
 import '../public/style.scss'
 
 // console.log(Geography.metersToPixels(...Geography.degreesToMeters(19.9484548, 50.0488673), 12))
@@ -23,9 +23,11 @@ const fragment = require('./shaders/fragment.glsl')
 const points = [[100, 100], [100, 200],
                 [200, 320], [260, 350],
                 [300, 310], [400, 300],
-                [400, 100], [600, 120]]
+                [400, 100], [600, 120],
+                [500, 160], [515, 175],
+                [550, 200], [600, 300]]
 
-const triangles = Geometry.triangulateLineMiter(points, 12.0)
+const triangles = TriangulateLines.miter(points, 10.0)
 
 // ...
 
@@ -40,7 +42,7 @@ let positionLocation, positionBuffer, resolutionLocation, colorLocation, matrixL
 const translationVector = [0, 0]
 const angleInRadians = 0
 const scaleVector = [1, 1]
-const color = [Math.random(), Math.random(), Math.random(), 1]
+const color = [0, 0, 0, 1]
 
 /**
  *
@@ -103,16 +105,16 @@ const drawScene = (gl, program) => {
 }
 
 // Set ups
-const canvas = Utils.setUpCanvas(width, height, scalingFactor)
+const canvas = WebGLUtils.setUpCanvas(width, height, scalingFactor)
 
 const gl = canvas.getContext('webgl')
 if (!gl) throw 'WebGL is not supported'
 
 // Shaders
-const vertexShader = Utils.createShader(gl, gl.VERTEX_SHADER, vertex)
-const fragmentShader = Utils.createShader(gl, gl.FRAGMENT_SHADER, fragment)
+const vertexShader = WebGLUtils.createShader(gl, gl.VERTEX_SHADER, vertex)
+const fragmentShader = WebGLUtils.createShader(gl, gl.FRAGMENT_SHADER, fragment)
 
-const program = Utils.createProgram(gl, vertexShader, fragmentShader)
+const program = WebGLUtils.createProgram(gl, vertexShader, fragmentShader)
 
 setupScene(gl, program)
 drawScene(gl, program)
