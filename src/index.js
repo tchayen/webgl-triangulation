@@ -45,7 +45,7 @@ const scaleVector = [1, 1]
 const color = [0, 0, 0, 1]
 
 /**
- *
+ * A bunch of initialization commands. It's not a real setup, you know...
  * @param {Object} gl WebGL context
  * @param {Object} program linked shaders
  */
@@ -64,7 +64,8 @@ const setupScene = (gl, program) => {
 }
 
 /**
- *
+ * Draw scene – enable vertex attribute, calculate scale-rotate-translate-projection
+ * matrix, call `gl.drawArrays`.
  * @param {Object} gl WebGL context
  * @param {Object} program linked shaders
  */
@@ -76,13 +77,17 @@ const drawScene = (gl, program) => {
   gl.enableVertexAttribArray(positionLocation)
   gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer)
 
+  const type      = gl.FLOAT // the data is 32 bit floats
+  const normalize = false    // don't normalize the data
+  const offset    = 0        // start at the beginning of the buffer
+
   const size      = 2        // 2 components per iteration, i.e. for
                              // a {x, y, z, w} vector we provide only {x, y}, z
                              // and w will default to 0 and 1 respectively
-  const type      = gl.FLOAT // the data is 32 bit floats
-  const normalize = false    // don't normalize the data
-  const stride    = 0        // 0 = move forward size * sizeof(type) each iteration to get the next position
-  const offset    = 0        // start at the beginning of the buffer
+
+  const stride    = 0        // 0 = move forward size * sizeof(type) each
+                             // iteration to get the next position
+
   gl.vertexAttribPointer(positionLocation, size, type, normalize, stride, offset)
 
   gl.uniform2f(resolutionLocation, gl.canvas.width, gl.canvas.height)
