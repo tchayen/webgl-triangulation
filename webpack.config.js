@@ -23,5 +23,11 @@ module.exports = {
       test: /\.glsl$/,
       use: { loader: 'webpack-glsl-loader' },
     }]
-  }
+  },
+  resolve: {
+    alias: {
+      src: `${__dirname}/src`,
+      math: `${__dirname}/src/math`,
+    },
+  },
 }

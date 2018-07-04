@@ -1,4 +1,4 @@
-import * as Vector from './Vector'
+import * as Vector from 'math/Vector'
 
 /**
  * Pushes coordinates of two triangles (line segment) to given `triangles` array.
@@ -114,8 +114,8 @@ const miter = (points, width) => {
     i += 1
   }
 
-  const size = points.length
   // Use last normal as another 'neutral element' for miter join.
+  const size = points.length
   triangles.push(
     ...Vector.sub2(points[size - 1], Vector.scale(normals[1][0], width)),
     ...Vector.sub2(points[size - 2], miter[1]),
@@ -152,7 +152,4 @@ const round = (points, divisions, width) => {
   throw 'Not implemented'
 }
 
-export {
-  normal,
-  miter,
-}
+export { normal, miter, bevel, round }

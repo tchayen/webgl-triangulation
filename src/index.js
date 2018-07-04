@@ -1,7 +1,7 @@
 import * as WebGLUtils from './WebGLUtils'
 import * as Geography from './Geography'
-import * as TriangulateLines from './TriangulateLines'
-import * as Matrix from './Matrix'
+import * as Triangulate from './triangulate/Triangulate'
+import * as Matrix from './math/Matrix'
 import '../public/style.scss'
 
 // console.log(Geography.metersToPixels(...Geography.degreesToMeters(19.9484548, 50.0488673), 12))
@@ -27,7 +27,7 @@ const points = [[100, 100], [100, 200],
                 [500, 160], [515, 175],
                 [550, 200], [600, 300]]
 
-const triangles = TriangulateLines.miter(points, 10.0)
+const triangles = Triangulate.Lines.miter(points, 10.0)
 
 // ...
 
