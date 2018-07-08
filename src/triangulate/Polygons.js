@@ -135,20 +135,25 @@ const detectEars = (v, r) => {
   const n = v.length
 
   for (let i = 0; i < n; i++) {
+    if (r.indexOf(i) >= 0) continue
+
     let isEar = true
     for (let j = 0; j < n; j++) {
-      if (r.indexOf(j) < 0) continue
-      if (j === cyclic(i - 1, n) || j === i || j === cyclic(i + 1, n)) continue
+      // It is ok to skip reflex vertices and the ones that actually belong to
+      // the triangle.
+      if (
+        r.indexOf(j) < 0 ||
+        j === cyclic(i - 1, n) ||
+        j === i ||
+        j === cyclic(i + 1, n)
+      ) continue
+
+      // If triangle contains v[j], v[i] cannot be an ear tip.
       if (isInsideTriangle([v[cyclic(i - 1, n)], v[i], v[cyclic(i + 1, n)]], v[j])) {
-
-        // console.log(`triangle [${cyclic(i - 1, n)}, ${i}, ${cyclic(i + 1, n)}] has ${j} inside, therefore ${i} is not ear tip`)
-
         isEar = false
       }
     }
-    if (isEar) {
-      ears.push(i)
-    }
+    if (isEar) ears.push(i)
   }
   return ears
 }

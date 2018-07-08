@@ -9,8 +9,9 @@ import '../public/style.scss'
 
 // ...
 
-console.log('earCut', Triangulate.Polygons.earCut([[0, 3], [3, 0], [5, 4], [8, 1], [9, 7], [7, 6], [6, 9], [4, 2], [1, 5], [2, 8]]))
-debugger
+console.log('earCut', Triangulate.Polygons.earCut(
+  [[0, 3], [3, 0], [5, 3], [8, 1], [9, 8], [7, 7], [6, 9], [4, 3], [2, 5], [3, 8]]
+))
 
 // Consts
 const width = window.innerWidth
