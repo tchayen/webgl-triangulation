@@ -46,10 +46,20 @@ const scale = (v, s) => {
  */
 const dot = (a, b) => a[0] * b[0] + a[1] * b[1]
 
+/**
+ * Calculates conventional cross product of two 2D vectors defined as
+ * determinant of matrix formed by storing those vectors column-wise to express
+ * cross product.
+ * @param {Number} a 2D vector
+ * @param {Number} b 2D vector
+ */
+const cross = (a, b) => a[0] * b[1] - a[1] * b[0]
+
 export {
   add2,
   sub2,
   normalize,
   scale,
   dot,
+  cross,
 }
