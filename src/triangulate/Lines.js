@@ -27,9 +27,7 @@ const addTriangles = (triangles, p1, p2, normals, width) => {
  * @returns {Number[]} array of triangle coordinates
  */
 const normal = (points, width) => {
-  // Make width equal to half of itself since it will used as distance from
-  // middle of the line
-  width /= 2.0
+  width /= 2.0 // Because it is distance from _middle_ of the line.
 
   const triangles = []
   let i = 0
@@ -57,9 +55,7 @@ const normal = (points, width) => {
  * @returns {Number[]} array of triangle coordinates
  */
 const miter = (points, width) => {
-  // Make width equal to half of itself since it will used as distance from
-  // middle of the line
-  width /= 2.0
+  width /= 2.0 // Because it is distance from _middle_ of the line.
 
   const triangles = []
   let dx = [], dy = [], normals = [], miter = []
