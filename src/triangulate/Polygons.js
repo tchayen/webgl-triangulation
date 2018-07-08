@@ -100,9 +100,8 @@ const isInsideTriangle = (t, p) =>
  *
  * **convex vertex** – one failing to be reflex one.
  *
- * @param {Number[][]} v array of 2D vertices
- * @param {Number[]} vMap mask providing info about indices that are not
- * virtually removed from v
+ * @param {Number[][]} v source array of 2D vertices, is not used directly
+ * @param {Number[]} vMap continuos array of vertices mapping to the real ones
  * @returns {Number[][]} array consisting of two arrays filled with **indices**
  */
 const splitConvexAndReflex = (v, vMap) => {
@@ -130,9 +129,8 @@ const splitConvexAndReflex = (v, vMap) => {
  * no vertices of the polygon are contained in the triangle other than the three
  * vertcies of the triangle.
  *
- * @param {Number[][]} v array of 2D vertices
- * @param {Number[]} vMap mask providing info about indices that are not
- * virtually removed from v
+ * @param {Number[][]} v source array of 2D vertices, is not used directly
+ * @param {Number[]} vMap continuos array of vertices mapping to the real ones
  * @returns {Number[]} array of **indices** from v
  */
 const detectEars = (v, r, vMap) => {

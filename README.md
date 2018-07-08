@@ -17,17 +17,21 @@ yarn add triangulify
 
 ### Triangulate
 
+Main module. Combines submodules for various types of triangulation.
+
 #### Triangulate.Polygons
 
-`earCut()`
-
-`...`
+Offers one method of triangulating polygons: `earCut`.
 
 #### Triangulate.Lines
 
 `miter(points, width)`
 
+Triangulates line consisting of points using miter joins, which means that the join points are calculated and no additional triangles are generated in the process.
+
 `bevel(points, width)`
+
+Triangulates line using bevel joins, which are singular triangles added at each join to connect two outer vertices (the inner one, with smaller angle) is connected in the same way as in miter.
 
 ### Math
 
