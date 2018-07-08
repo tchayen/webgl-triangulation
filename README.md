@@ -1,38 +1,34 @@
-# topojson-webgl
+# triangulify
 
-WebGL renderer for TopoJSON files.
+Set of utilities for triangulating lines and polygons.
+
+Aims to offer lightweight (minimal number of external dependencies increasing bundle size, currently there are _none_), production class solution for triangulating relatively big number of vertices.
+
+Targeted use cases and performance objectives are for rendering maps with rich polygons featuring thousands points. Anything less complicated or similar to that should be doing great with this lib.
+
+The lib is everything-agnostic. All calculations are just pure maths, it is suitable both for `node.js` backend and any kind of JS frontend supporting `npm` modules.
 
 ## Install
 ```bash
-yarn add topojson-webgl
+yarn add triangulify
 ```
 
-## Plans
+## Modules
 
-This lib aims to help as many use cases and possible, providing only the necessary parts and moving everything else to usage examples.
+### Triangulate
 
-## Possible (future) usages
+#### Triangulate.Polygons
 
-### Fully dynamic
+`earCut()`
 
-- data is downloaded dynamically using `topojson-fetch`
-- mesh is created by triangularizing `*.topojson` data
-- `topojson-webgl` renders it
+`...`
 
-### Typical usage of `*.topojson` in assets
+#### Triangulate.Lines
 
-- data is provided as one asset file
-- mesh is created by triangularizing `*.topojson` data
-- `topojson-webgl` renders it
+`miter(points, width)`
 
-### Highly preprocessed
+`bevel(points, width)`
 
-- mesh is loaded from assets
-- `topojson-webgl` renders it
+### Math
 
-## TODO
-
-- render lines
-
-## Reading list
-[Open Street Map Wiki – Quad Tiles](https://wiki.openstreetmap.org/wiki/QuadTiles)
+Minimal math lib for operations with 3x3 matrices and 2D vectors.
