@@ -9,10 +9,6 @@ import '../public/style.scss'
 
 // ...
 
-console.log('earCut', Triangulate.Polygons.earCut(
-  [[0, 3], [3, 0], [5, 3], [8, 1], [9, 8], [7, 7], [6, 9], [4, 3], [2, 5], [3, 8]]
-))
-
 // Consts
 const width = window.innerWidth
 const height = window.innerHeight
@@ -24,14 +20,18 @@ const fragment = require('./shaders/fragment.glsl')
 
 // ...
 
-const points = [[100, 100], [100, 200],
-                [200, 320], [260, 350],
-                [300, 310], [400, 300],
-                [400, 100], [600, 120],
-                [500, 160], [515, 175],
-                [550, 200], [600, 300]]
+// const points = [[100, 100], [100, 200],
+//                 [200, 320], [260, 350],
+//                 [300, 310], [400, 300],
+//                 [400, 100], [600, 120],
+//                 [500, 160], [515, 175],
+//                 [550, 200], [600, 300]]
 
-const triangles = Triangulate.Lines.miter(points, 10.0)
+// const triangles = Triangulate.Lines.miter(points, 10.0)
+
+const points = //[[0, 3], [3, 0], [5, 3], [8, 1], [9, 8], [7, 7], [6, 9], [4, 3], [2, 5], [3, 8]].map(([x, y]) => [x * 50, y * 50])
+[[50, 110], [150, 30], [240, 115], [320, 65], [395, 170], [305, 160], [265, 240], [190, 100], [95, 125], [100, 215]]
+const triangles = Triangulate.Polygons.earCut(points)
 
 // ...
 

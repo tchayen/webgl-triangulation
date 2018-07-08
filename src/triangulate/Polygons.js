@@ -165,26 +165,27 @@ const detectEars = (v, r) => {
  * @returns {Number[][]} array of triangle indices arrays
  */
 const earCut = vertices => {
-  const v = vertices
-  const n = v.length
+  let v = vertices
+  let n = v.length
   let [c, r] = splitConvexAndReflex(v)
   let e = detectEars(v, r)
   const triangles = []
 
-  // console.log('v', v)
-  // console.log('r', r)
-  // console.log('c', c)
-  // console.log('e', e)
+  while (v.length > 3) {
+    const removed = e.shift()
+    triangles.push(...v[cyclic(removed - 1, n)], ...v[removed], ...v[cyclic(removed + 1, n)])
 
-  // while (e.length > 0) {
-  //   const removed = e.shift()
-  //   triangles.push(cyclic(removed - 1, n), removed, cyclic(removed + 1, n))
-  //   v.splice(removed, 1)
-  //   [c, r] = splitConvexAndReflex(v)
-  //   e = detectEars(v)
-  // }
+    v.splice(removed, 1)
+    n = n - 1
 
-  return triangles
+    let [_c, _r] = splitConvexAndReflex(v)
+    c = _c
+    r = _r
+
+    e = detectEars(v, r)
+  }
+  triangles.push(...v[0], ...v[1], ...v[2])
+  return new Float32Array(triangles)
 }
 
 export {
