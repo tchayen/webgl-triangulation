@@ -13,6 +13,7 @@ const v = [[50, 110], [150, 30], [240, 115], [320, 65], [395, 170], [305, 160], 
 const c = [0, 1, 3, 4, 6, 9]
 const r = [2, 5, 7, 8]
 const e = [3, 4, 6, 9]
+const t = [[2, 3, 4], [2, 4, 5], [2, 5, 6], [2, 6, 7], [1, 2, 7], [0, 1, 7], [0, 7, 8], [0, 8, 9]]
 
 test('cyclic() works as intended', () => {
   expect(cyclic(1, 5)).toBe(1)
@@ -49,4 +50,8 @@ test('splitConvexAndReflex() works as intended', () => {
 
 test('detectEars() works as intended', () => {
   expect(detectEars(v, r)).toEqual(e)
+})
+
+test('earCut() works as intended', () => {
+  expect(earCut(v)).toEqual(t)
 })

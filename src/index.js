@@ -29,9 +29,20 @@ const fragment = require('./shaders/fragment.glsl')
 
 // const triangles = Triangulate.Lines.miter(points, 10.0)
 
-const points = //[[0, 3], [3, 0], [5, 3], [8, 1], [9, 8], [7, 7], [6, 9], [4, 3], [2, 5], [3, 8]].map(([x, y]) => [x * 50, y * 50])
-[[50, 110], [150, 30], [240, 115], [320, 65], [395, 170], [305, 160], [265, 240], [190, 100], [95, 125], [100, 215]]
+const points = [[50, 110], [150, 30], [240, 115], [320, 65], [395, 170], [305, 160], [265, 240], [190, 100], [95, 125], [100, 215]]
+
 const triangles = Triangulate.Polygons.earCut(points)
+console.log(triangles)
+let triangleVertices = []
+triangles.forEach(t => {
+  for (let i = 0; i < 3; i++) {
+    triangleVertices.push(...points[t[i]])
+  }
+})
+
+triangleVertices = new Float32Array(triangleVertices)
+
+console.log(triangleVertices)
 
 // ...
 
@@ -63,7 +74,7 @@ const setupScene = (gl, program) => {
   positionBuffer = gl.createBuffer()
 
   gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer)
-  gl.bufferData(gl.ARRAY_BUFFER, triangles, gl.STATIC_DRAW)
+  gl.bufferData(gl.ARRAY_BUFFER, triangleVertices, gl.STATIC_DRAW)
   gl.clearColor(0, 0, 0, 0)
 }
 
@@ -107,7 +118,7 @@ const drawScene = (gl, program) => {
 
   gl.uniformMatrix3fv(matrixLocation, false, matrix)
 
-  const count         = 6 * (points.length - 1) // Execute vertex shader n times
+  const count         = triangles.length * 3 // 6 * (points.length - 1) // Execute vertex shader n times
   const arrayOffset   = 0
   const primitiveType = gl.TRIANGLES
   gl.drawArrays(primitiveType, arrayOffset, count)

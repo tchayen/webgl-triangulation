@@ -101,15 +101,18 @@ const isInsideTriangle = (t, p) =>
  * **convex vertex** – one failing to be reflex one.
  *
  * @param {Number[][]} v array of 2D vertices
+ * @param {Number[]} vMap mask providing info about indices that are not
+ * virtually removed from v
  * @returns {Number[][]} array consisting of two arrays filled with **indices**
  */
-const splitConvexAndReflex = v => {
+const splitConvexAndReflex = (v, vMap) => {
+  if (!vMap) vMap = v.map((_, i) => i)
   const reflex = []
   const convex = []
-  const n = v.length
+  const n = vMap.length
 
-  for (let i = 0; i < v.length; i++) {
-    if (isReflex(v[cyclic(i - 1, n)], v[i], v[cyclic(i + 1, n)])) {
+  for (let i = 0; i < vMap.length; i++) {
+    if (isReflex(v[vMap[cyclic(i - 1, n)]], v[vMap[i]], v[vMap[cyclic(i + 1, n)]])) {
       reflex.push(i)
     } else {
       convex.push(i)
@@ -128,11 +131,14 @@ const splitConvexAndReflex = v => {
  * vertcies of the triangle.
  *
  * @param {Number[][]} v array of 2D vertices
+ * @param {Number[]} vMap mask providing info about indices that are not
+ * virtually removed from v
  * @returns {Number[]} array of **indices** from v
  */
-const detectEars = (v, r) => {
+const detectEars = (v, r, vMap) => {
+  if (!vMap) vMap = v.map((_, i) => i)
   const ears = []
-  const n = v.length
+  const n = vMap.length
 
   for (let i = 0; i < n; i++) {
     if (r.indexOf(i) >= 0) continue
@@ -149,7 +155,7 @@ const detectEars = (v, r) => {
       ) continue
 
       // If triangle contains v[j], v[i] cannot be an ear tip.
-      if (isInsideTriangle([v[cyclic(i - 1, n)], v[i], v[cyclic(i + 1, n)]], v[j])) {
+      if (isInsideTriangle([v[vMap[cyclic(i - 1, n)]], v[vMap[i]], v[vMap[cyclic(i + 1, n)]]], v[vMap[j]])) {
         isEar = false
       }
     }
@@ -161,31 +167,38 @@ const detectEars = (v, r) => {
 /**
  * Polygon triangulation using ear cut approach based on the following paper:
  * https://www.geometrictools.com/Documentation/TriangulationByEarClipping.pdf
- * @param {Number[]} vertices vertex array. **NOTE:** _must be flattened_
+ * @param {Number[][]} vertices vertex array
  * @returns {Number[][]} array of triangle indices arrays
  */
 const earCut = vertices => {
-  let v = vertices
+  const v = vertices
   let n = v.length
-  let [c, r] = splitConvexAndReflex(v)
-  let e = detectEars(v, r)
+  const vMap = v.map((_, i) => i)
+
+  let [c, r] = splitConvexAndReflex(v, vMap)
+  let e = detectEars(v, r, vMap)
+
   const triangles = []
 
-  while (v.length > 3) {
+  while (vMap.length > 3) {
     const removed = e.shift()
-    triangles.push(...v[cyclic(removed - 1, n)], ...v[removed], ...v[cyclic(removed + 1, n)])
+    triangles.push([
+      vMap[cyclic(removed - 1, n)],
+      vMap[removed],
+      vMap[cyclic(removed + 1, n)],
+    ])
 
-    v.splice(removed, 1)
+    vMap.splice(removed, 1)
     n = n - 1
 
-    let [_c, _r] = splitConvexAndReflex(v)
+    let [_c, _r] = splitConvexAndReflex(v, vMap)
     c = _c
     r = _r
 
-    e = detectEars(v, r)
+    e = detectEars(v, r, vMap)
   }
-  triangles.push(...v[0], ...v[1], ...v[2])
-  return new Float32Array(triangles)
+  triangles.push([vMap[0], vMap[1], vMap[2]])
+  return triangles
 }
 
 export {
