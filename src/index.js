@@ -33,14 +33,7 @@ const points = [[50, 110], [150, 30], [240, 115], [320, 65], [395, 170], [305, 1
 
 const triangles = Triangulate.Polygons.earCut(points)
 console.log(triangles)
-let triangleVertices = []
-triangles.forEach(t => {
-  for (let i = 0; i < 3; i++) {
-    triangleVertices.push(...points[t[i]])
-  }
-})
-
-triangleVertices = new Float32Array(triangleVertices)
+const triangleVertices = new Float32Array(Triangulate.Polygons.resolveTriangleVertices(points, triangles))
 
 console.log(triangleVertices)
 

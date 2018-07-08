@@ -168,7 +168,8 @@ const detectEars = (v, r, vMap) => {
  * Polygon triangulation using ear cut approach based on the following paper:
  * https://www.geometrictools.com/Documentation/TriangulationByEarClipping.pdf
  * @param {Number[][]} vertices vertex array
- * @returns {Number[][]} array of triangle indices arrays
+ * @returns {Number[][]} array of threes (triangles) pointing to indices in the
+ * `vertices` array
  */
 const earCut = vertices => {
   const v = vertices
@@ -201,6 +202,30 @@ const earCut = vertices => {
   return triangles
 }
 
+/**
+ * Takes array of points and 'instruction' for constructing array of triangles.
+ * Returns resolved, flat array of vertex coordinates.
+ *
+ * **Given:**
+ *
+ * `points = [[110, 54], [82, 243], [156, 120]]`
+ *
+ * `triangles = [[0, 1, 2]]`
+ *
+ * results in:
+ *
+ * `[110, 54, 82, 243, 156, 120]`
+ *
+ * @param {Number[]} points
+ * @param {Number[][]} triangles array of threes (triangles) pointing to indices
+ * in the `vertices` array
+ */
+const resolveTriangleVertices = (points, triangles) => {
+  const result = []
+  triangles.forEach(t => t.forEach(i => result.push(...points[i])))
+  return result
+}
+
 export {
   joinWithVectors,
   cyclic,
@@ -210,4 +235,5 @@ export {
   detectEars,
   isReflex,
   earCut,
+  resolveTriangleVertices,
 }
