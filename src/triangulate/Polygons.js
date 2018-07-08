@@ -217,6 +217,7 @@ const earCut = vertices => {
  * @param {Number[]} points
  * @param {Number[][]} triangles array of threes (triangles) pointing to indices
  * in the `vertices` array
+ * @returns {Number[]} array of vertex coordinates
  */
 const resolveTriangleVertices = (points, triangles) => {
   const result = []
