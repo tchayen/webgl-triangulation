@@ -1,20 +1,6 @@
 import * as Vector from '../math/Vector'
 
 /**
- * Polygon triangulation using ear cut approach based on the following paper:
- * https://www.geometrictools.com/Documentation/TriangulationByEarClipping.pdf
- * @param {Number[]} vertices vertex array. **NOTE:** _must be flattened_
- * @returns {Number[][]} array of triangle indices arrays
- */
-const earCut = vertices => {
-  const v = cyclicList(vertices)
-  const e = detectEars(v)
-  const [r, c] = splitConvexAndReflex(v)
-
-  return []
-}
-
-/**
  * Return new index based on `i` from `n`-element array as if it was cyclic.
  * @param {Number} i index
  * @param {Number} n size of array
@@ -57,7 +43,7 @@ const joinWithVectors = (...vertices) => {
  * @param {Number[]} c 2D point
  * @returns {Boolean} true or false
  */
-const isReflex = (a, b, c) => Vector.cross(Vector.sub2(b, a), Vector.sub2(c, b)) > 0
+const isReflex = (a, b, c) => Vector.cross(Vector.sub2(b, a), Vector.sub2(c, b)) < 0
 
 /**
  * Checks whether given point `p1` lies on the same side of **AB** as `p2`.
@@ -87,8 +73,8 @@ const sameSide = (p1, p2, a, b) => {
  * Checks if given point `p` lies inside triangle `t`.
  *
  * ### Explanation
- * Any point `p` where `cross(b - a, p - a)` does not point in the same
- * direction as `cross(b - a, c - a)` isn't inside the triangle. If the cross
+ * Any point `p` where `cross(b-a, p-a)` does not point in the same
+ * direction as `cross(b-a, c-a)` isn't inside the triangle. If the cross
  * products do point in the same direction, then we need to test `p` with the
  * other lines as well. If the point was on the same side of **AB** as **C** and
  * is also on the same side of **BC** as **A** and on the same side of **CA** as
@@ -115,50 +101,94 @@ const isInsideTriangle = (t, p) =>
  * **convex vertex** – one failing to be reflex one.
  *
  * @param {Number[][]} v array of 2D vertices
- * @returns {Number[]} array of **indices** from v
+ * @returns {Number[][]} array consisting of two arrays filled with **indices**
  */
 const splitConvexAndReflex = v => {
   const reflex = []
   const convex = []
+  const n = v.length
+
   for (let i = 0; i < v.length; i++) {
-    const [v, w] = joinWithVectors([v[cyclic(i - 1, n)], v[i], v[cyclic(i + 1, n)]])
-    if (isReflex(v, w)) {
+    if (isReflex(v[cyclic(i - 1, n)], v[i], v[cyclic(i + 1, n)])) {
       reflex.push(i)
     } else {
       convex.push(i)
     }
   }
-  return [reflex, convex]
+  return [convex, reflex]
 }
 
 /**
  * Returns array of vertices filtered to contain only ear tips.
+ *
+ * **ear of a polygon** – a triangle formed by three consecutive vertices
+ * `v[i-1]`, `v[i]`, `v[i+1]`, for which `v[i]` is a convex vertex, the line
+ * segment from `v[i-1]` to `v[i+1]` lies completely inside the polygon and
+ * no vertices of the polygon are contained in the triangle other than the three
+ * vertcies of the triangle.
+ *
  * @param {Number[][]} v array of 2D vertices
  * @returns {Number[]} array of **indices** from v
  */
-const detectEars = v => {
-  const e = []
+const detectEars = (v, r) => {
+  const ears = []
   const n = v.length
-  for (let i = 0; i < v.length; i++) {
+
+  for (let i = 0; i < n; i++) {
     let isEar = true
-    for (let j = 0; j < v.length; j++) {
-      if (i === j) continue
-      if (insideTriangle([v[cyclic(i - 1, n)], v[i], v[cyclic(i + 1, n)]], v[j])) {
+    for (let j = 0; j < n; j++) {
+      if (r.indexOf(j) < 0) continue
+      if (j === cyclic(i - 1, n) || j === i || j === cyclic(i + 1, n)) continue
+      if (isInsideTriangle([v[cyclic(i - 1, n)], v[i], v[cyclic(i + 1, n)]], v[j])) {
+
+        // console.log(`triangle [${cyclic(i - 1, n)}, ${i}, ${cyclic(i + 1, n)}] has ${j} inside, therefore ${i} is not ear tip`)
+
         isEar = false
       }
     }
-    if (isEar) e.push(i)
+    if (isEar) {
+      ears.push(i)
+    }
   }
   return ears
 }
 
+/**
+ * Polygon triangulation using ear cut approach based on the following paper:
+ * https://www.geometrictools.com/Documentation/TriangulationByEarClipping.pdf
+ * @param {Number[]} vertices vertex array. **NOTE:** _must be flattened_
+ * @returns {Number[][]} array of triangle indices arrays
+ */
+const earCut = vertices => {
+  const v = vertices
+  const n = v.length
+  let [c, r] = splitConvexAndReflex(v)
+  let e = detectEars(v, r)
+  const triangles = []
+
+  // console.log('v', v)
+  // console.log('r', r)
+  // console.log('c', c)
+  // console.log('e', e)
+
+  // while (e.length > 0) {
+  //   const removed = e.shift()
+  //   triangles.push(cyclic(removed - 1, n), removed, cyclic(removed + 1, n))
+  //   v.splice(removed, 1)
+  //   [c, r] = splitConvexAndReflex(v)
+  //   e = detectEars(v)
+  // }
+
+  return triangles
+}
+
 export {
-  earCut,
-  cyclic,
   joinWithVectors,
-  isReflex,
+  cyclic,
   sameSide,
   isInsideTriangle,
   splitConvexAndReflex,
   detectEars,
+  isReflex,
+  earCut,
 }
