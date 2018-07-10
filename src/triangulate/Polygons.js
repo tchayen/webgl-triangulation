@@ -62,12 +62,9 @@ const isReflex = (a, b, c) => Vector.cross(Vector.sub2(b, a), Vector.sub2(c, b))
  * @param {Number[]} a start of the segment
  * @param {Number[]} b end of the segment
  */
-const sameSide = (p1, p2, a, b) => {
-  const cp1 = Vector.cross(Vector.sub2(b, a), Vector.sub2(p1, a))
-  const cp2 = Vector.cross(Vector.sub2(b, a), Vector.sub2(p2, a))
-
-  return cp1 * cp2 >= 0
-}
+const sameSide = (p1, p2, a, b) =>
+  Vector.cross(Vector.sub2(b, a), Vector.sub2(p1, a)) *
+  Vector.cross(Vector.sub2(b, a), Vector.sub2(p2, a)) >= 0
 
 /**
  * Checks if given point `p` lies inside triangle `t`.
@@ -172,6 +169,7 @@ const detectEars = (v, r, vMap) => {
 const earCut = vertices => {
   const v = vertices
   let n = v.length
+  if (n < 3) throw 'Cannot triangulate less than 3 vertices'
   const vMap = v.map((_, i) => i)
 
   let [c, r] = splitConvexAndReflex(v, vMap)

@@ -1,5 +1,7 @@
 # triangulify
 
+_because `triangulate` was already taken_
+
 Set of utilities for triangulating lines and polygons.
 
 Aims to offer lightweight (minimal number of external dependencies increasing bundle size, currently there are _none_), production class solution for triangulating relatively big number of vertices.
@@ -50,3 +52,15 @@ It is in the first place set of helpers for other modules in the library and eve
 Visit `examples` directory for some usage examples.
 
 They provide complete, tiny WebGL wrappers for rendering something real on the screen.
+
+## Todo
+
+### Tests
+
+- buildings with holes [AGH A0](https://www.openstreetmap.org/relation/3111004)
+
+- complicated shapes with holes [Main Square Cracow](https://www.openstreetmap.org/relation/3278602)
+
+- triangulation of huge objects like [Lake Superior](https://www.openstreetmap.org/relation/4039486)
+
+- test triangulation with complicated rivers [Puszcza niepołomicka](https://www.openstreetmap.org/#map=12/47.9571/43.3078)
