@@ -160,6 +160,50 @@ const detectEars = (v, r, vMap) => {
 }
 
 /**
+ * Eliminate single hole from the polygon
+ * @param {Number[][]} vertices outer vertices of the polygon
+ * @param {Number[][][]} holes array of arrays of vertices forming holes
+ * @returns {Number[][]}
+ */
+const eliminateHole = (vertices, holes) => {
+  // NOTE: holes theoretically could be connected to themselves with keeping at
+  // least one connected to the outer polygon, but for simplicity it is not used
+
+  // TODO: remember to check ray casting with holes too!
+  let index
+  let xMax = 0
+  vertices.forEach((v, i) => {
+    if (v[0] > xMax) {
+      xMax = v[0]
+      index = i
+    }
+  })
+
+  // Temporarily does not
+  return [vertices, holes]
+}
+/**
+ * Adds vertices to make triangulation possible using regular ear cut.
+ * @param {Number[][]} vertices outer vertices of the polygon
+ * @param {Number[][][]} holes array of arrays of vertices forming holes
+ * @returns {Number[][]} `vertices` array with new vertices added to fix holes
+ *
+ * **Note:** _Holes should be clock-wise (opposed to CCW polygon) and not nested_
+ */
+const eliminateHoles = (vertices, holes) => {
+  let v = vertices // TODO: copy
+  let h = holes // TODO: copy
+
+  while (h.length > 0) {
+    [_v, _h] = eliminateHole(v, h)
+    v = _v
+    h = _h
+  }
+
+  return v
+}
+
+/**
  * Polygon triangulation using ear cut approach based on the following paper:
  * https://www.geometrictools.com/Documentation/TriangulationByEarClipping.pdf
  * @param {Number[][]} vertices vertex array
@@ -177,11 +221,11 @@ const earCut = vertices => {
 
   const triangles = []
 
-  let i = 0
+  //let i = 0
   while (vMap.length > 3) {
-    if (i >= e.length) i = 0
+    //if (i >= e.length) i = 0
 
-    const [removed] = e.splice(i, 1)
+    const removed = e.shift()//splice(i, 1)
     triangles.push([
       vMap[cyclic(removed - 1, n)],
       vMap[removed],
@@ -197,7 +241,7 @@ const earCut = vertices => {
 
     e = detectEars(v, r, vMap)
 
-    i += 2
+    //i += 2
   }
   triangles.push([vMap[0], vMap[1], vMap[2]])
   return triangles
@@ -224,7 +268,10 @@ const earCut = vertices => {
  */
 const resolveTriangleVertices = (points, triangles) => {
   const result = []
-  triangles.forEach(t => t.forEach(i => result.push(...points[i])))
+  triangles.forEach(t => {
+    const color = Math.random() * 0.5
+    t.forEach(i => result.push(...points[i], color))
+  })
   return result
 }
 

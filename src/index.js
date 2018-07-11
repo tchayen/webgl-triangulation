@@ -31,7 +31,7 @@ const b = a[0]
 
 const linePoints = [[100, 300], [100, 250], [200, 320], [260, 350], [300, 310], [450, 300], [400, 100], [600, 120], [500, 160], [515, 175], [550, 200], [600, 300]]
 const lineTriangles = Triangulate.Lines.miter(linePoints, 10.0)
-const polygonPoints = [[50, 110], [150, 30], [240, 115], [320, 65], [395, 170], [305, 160], [265, 240], [190, 100], [95, 125], [100, 215]]
+const polygonPoints = b//[[50, 110], [150, 30], [240, 115], [320, 65], [395, 170], [305, 160], [265, 240], [190, 100], [95, 125], [100, 215]]
 const triangulatedPolygon = Triangulate.Polygons.earCut(polygonPoints)
 const polygonTriangles = new Float32Array(Triangulate.Polygons.resolveTriangleVertices(polygonPoints, triangulatedPolygon))
 
@@ -45,12 +45,11 @@ const fLetter = new Float32Array([
   30, 60, 67, 60, 30, 90, 30, 90, 67, 60, 67, 90,
 ])
 
-let positionLocation, resolutionLocation, colorLocation, matrixLocation
+let positionLocation, resolutionLocation, matrixLocation
 
 const translationVector = [0, 0]
 const angleInRadians = 0
 const scaleVector = [1, 1]
-const color = [0, 0, 0, 1]
 
 /**
  * A bunch of initialization commands. It's not a real setup, you know...
@@ -64,7 +63,6 @@ const setupScene = (gl, program, objects) => {
 
   // Set uniforms.
   resolutionLocation = gl.getUniformLocation(program, "u_resolution")
-  colorLocation      = gl.getUniformLocation(program, "u_color")
   matrixLocation     = gl.getUniformLocation(program, "u_matrix")
 
   // Set up data in buffers.
@@ -78,6 +76,7 @@ const setupScene = (gl, program, objects) => {
       triangles: object,
     })
   })
+
   gl.clearColor(0, 0, 0, 0)
 
   return resultObjects
@@ -100,8 +99,6 @@ const drawScene = (gl, program, objects, constants, wireframe) => {
     const { buffer, triangles } = object
 
     gl.uniform2f(resolutionLocation, gl.canvas.width, gl.canvas.height)
-    const color = wireframe === undefined ? [0.3, 0.3, 0.3, 1] : wireframe === true ? [0, 0, 0, 1] : [0.9, 0.9, 0.9, 1]
-    gl.uniform4fv(colorLocation, color)
 
     const matrix = Matrix.calculateSRTP(
       [gl.canvas.clientWidth, gl.canvas.clientHeight],
@@ -124,10 +121,11 @@ const drawScene = (gl, program, objects, constants, wireframe) => {
       constants.offset,
     )
 
+    console.log(object)
     gl.drawArrays(
       wireframe ? gl.LINE_STRIP : gl.TRIANGLES,// constants.primitiveType,
       constants.arrayOffset,
-      object.triangles.length / 2,
+      object.triangles.length / 3,
     )
   })
 }
@@ -148,7 +146,8 @@ const constants = {
   // 2 components per iteration, i.e. for
   // a {x, y, z, w} vector we provide only {x, y}, z
   // and w will default to 0 and 1 respectively.
-  size: 2,
+  // WIP: changed to 3 to store color
+  size: 3,
   // 0 = move forward size * sizeof(type) each iteration to get the next position
   stride: 0,
   arrayOffset: 0,
