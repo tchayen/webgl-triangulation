@@ -177,8 +177,11 @@ const earCut = vertices => {
 
   const triangles = []
 
+  let i = 0
   while (vMap.length > 3) {
-    const removed = e.shift()
+    if (i >= e.length) i = 0
+
+    const [removed] = e.splice(i, 1)
     triangles.push([
       vMap[cyclic(removed - 1, n)],
       vMap[removed],
@@ -193,6 +196,8 @@ const earCut = vertices => {
     r = _r
 
     e = detectEars(v, r, vMap)
+
+    i += 2
   }
   triangles.push([vMap[0], vMap[1], vMap[2]])
   return triangles

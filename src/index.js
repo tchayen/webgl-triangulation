@@ -25,17 +25,17 @@ const b = a[0]
   .map(e => Geography.degreesToMeters(e[0], e[1]))
   .map(e => [4 * (e[0] - 2217750), 4 * (e[1] - 6457350)])
 
-console.log(b)
+// console.log(b)
 
 // ...
 
 const linePoints = [[100, 300], [100, 250], [200, 320], [260, 350], [300, 310], [450, 300], [400, 100], [600, 120], [500, 160], [515, 175], [550, 200], [600, 300]]
 const lineTriangles = Triangulate.Lines.miter(linePoints, 10.0)
-const polygonPoints = b//[[50, 110], [150, 30], [240, 115], [320, 65], [395, 170], [305, 160], [265, 240], [190, 100], [95, 125], [100, 215]]
+const polygonPoints = [[50, 110], [150, 30], [240, 115], [320, 65], [395, 170], [305, 160], [265, 240], [190, 100], [95, 125], [100, 215]]
 const triangulatedPolygon = Triangulate.Polygons.earCut(polygonPoints)
 const polygonTriangles = new Float32Array(Triangulate.Polygons.resolveTriangleVertices(polygonPoints, triangulatedPolygon))
 
-console.log(polygonPoints.length, polygonTriangles.length / 6.0)
+// console.log(polygonPoints.length, polygonTriangles.length / 6.0)
 
 // ...
 
@@ -162,5 +162,5 @@ const fragmentShader = WebGLUtils.createShader(gl, gl.FRAGMENT_SHADER, fragment)
 const program = WebGLUtils.createProgram(gl, vertexShader, fragmentShader)
 
 const objects = setupScene(gl, program, [/*lineTriangles*/, polygonTriangles])
-// drawScene(gl, program, objects, constants)
 drawScene(gl, program, objects, constants)
+// drawScene(gl, program, objects, constants, true)

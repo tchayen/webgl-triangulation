@@ -2,7 +2,7 @@
 
 _because `triangulate` was already taken_
 
-Set of utilities for triangulating lines and polygons.
+Set of utilities for triangulating **lines** and **polygons** (handles those with multiple holes too).
 
 Aims to offer lightweight (minimal number of external dependencies increasing bundle size, currently there are _none_), production class solution for triangulating relatively big number of vertices.
 
