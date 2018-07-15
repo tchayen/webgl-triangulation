@@ -241,6 +241,8 @@ const detectEars = (v, r, vMap) => {
  * @param {Number[][]} inner
  */
 const combinePolygons = (outer, inners) => {
+  debugger
+
   const inner = inners.shift()
 
   // 1. Find vertex `M` of maximum x-value.
@@ -253,7 +255,7 @@ const combinePolygons = (outer, inners) => {
     }
   })
 
-  const m = outer[index]
+  const m = inner[index]
   let visible
 
   // 2. Find the edges that intersect with ray `M + t * (1, 0)`. Let `K` be the
@@ -311,26 +313,27 @@ const combinePolygons = (outer, inners) => {
 /**
  * Adds vertices to make triangulation possible using regular ear cut.
  * @param {Number[][]} outer vertices of the outer polygon
- * @param {Number[][][]} inner array of arrays of vertices forming inner
+ * @param {Number[][][]} inners array of arrays of vertices forming inner
  * polygons (holes)
  * @returns {Number[][]} `vertices` array with new vertices added to fix holes
  *
  * **Note:** _Holes should be clock-wise (opposed to CCW polygon) and not nested_
  */
 const eliminateHoles = (outer, inners) => {
-  debugger
-
-  let h = inners.slice()
+  let holes = inners.slice()
 
   // Sort holes by max x-value.
-  holes = inners.sort((i, j) => j.map(v => v[0]).reduce(max) - i.map(v => v[0]).reduce(max))
+  holes = inners.sort((i, j) =>
+    j.map(v => v[0]).reduce((a, b) => Math.max(a, b)) -
+    i.map(v => v[0]).reduce((a, b) => Math.max(a, b)))
+
+  combinePolygons(outer, holes)
 
   // Merge holes with outer polygon.
-  while (h.length > 0) {
-    combinePolygons(outer, h)
-  }
+  // while (holes.length > 0) {
+  // }
 
-  return v
+  return outer
 }
 
 /**
@@ -413,6 +416,7 @@ export {
   splitConvexAndReflex,
   detectEars,
   isReflex,
+  eliminateHoles,
   earCut,
   resolveTriangleVertices,
 }
