@@ -55,6 +55,9 @@ const dot = (a, b) => a[0] * b[0] + a[1] * b[1]
  */
 const cross = (a, b) => a[0] * b[1] - a[1] * b[0]
 
+const squaredDistance = (a, b) =>
+  (b[0] - a[0]) * (b[0] - a[0]) + (b[1] - a[1]) * (b[1] - a[1])
+
 export {
   add2,
   sub2,
@@ -62,4 +65,5 @@ export {
   scale,
   dot,
   cross,
+  squaredDistance,
 }

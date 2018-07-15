@@ -1,4 +1,5 @@
 import * as Vector from '../math/Vector'
+import { PreviousMap } from '../../node_modules/postcss';
 
 /**
  * Return new index based on `i` from `n`-element array as if it was cyclic.
@@ -27,7 +28,7 @@ const joinWithVectors = (...vertices) => {
 }
 
 /**
- * Checks if vertex between two others is reflex.
+ * Checks if vertex `b` laying between `a` and `c` is reflex.
  *
  * ### Explanation
  * Given three consecutive vertices in counter clockwise order, the inside of
@@ -159,45 +160,174 @@ const detectEars = (v, r, vMap) => {
   return ears
 }
 
-/**
- * Eliminate single hole from the polygon
- * @param {Number[][]} vertices outer vertices of the polygon
- * @param {Number[][][]} holes array of arrays of vertices forming holes
- * @returns {Number[][]}
- */
-const eliminateHole = (vertices, holes) => {
-  // NOTE: holes theoretically could be connected to themselves with keeping at
-  // least one connected to the outer polygon, but for simplicity it is not used
+// const combinePolygons = (outer, inners) => {
+//   const inner = inners.shift()
 
-  // TODO: remember to check ray casting with holes too!
-  let index
+//   // Find vertex `M` of maximum x-value.
+//   let xMax = 0
+//   let index
+//   inner.forEach((v, i) => {
+//     if (v[0] > xMax) {
+//       xMax = v[0]
+//       index = i
+//     }
+//   })
+//   const m = outer[index]
+
+//   // Find edge whose intersection with ray `M + t * (1, 0)` minimizes the ray
+//   // parameter t >= 0.
+//   let i = outer.length - 1, j = 0
+//   while (j < outer.length) {
+//     // Consider only edges which have its first vertex below and second above `M`.
+//     const iDiff = [outer[i][0] - m[0], outer[i][1] - m[1]]
+//     const jDiff = [outer[j][0] - m[0], outer[j][1] - m[1]]
+//     if (iDiff[1] > 0 || jDiff[1] < 0) continue
+
+//     let s, t
+//     let v0Min, v1Min
+//     let endMin
+//     let currentEndMin = -1
+//     if (iDiff[1] < 0) {
+//       if (jDiff[1] > 0) {
+//         s = iDiff[1] / (iDiff[1] - jDiff[1])
+//         t = iDiff[0] + s * (jDiff[0] - iDiff[0])
+//       } else { // jDiff[1] === 0
+//         t = jDiff[0]
+//         currentEndMin = j
+//       }
+//     } else { // iDiff[1] === 0
+//       if (jDiff[1] > 0) {
+//         t = iDiff[0]
+//         currentEndMin = i
+//       } else { // jDiff[1] === 0
+//         if (iDiff[0] < jDiff[0]) {
+//           t = iDiff[0]
+//           currentEndMin = i
+//         } else {
+//           t = jDiff[0]
+//           currentEndMin = j
+//         }
+//       }
+//     }
+
+//     if (0 <= t && t < intr[0]) {
+//       intr[0] = t
+//       v0Min = i
+//       v1Min = j
+//       // If `currentEndMin` === -1 then the current closest point is an
+//       // edge-interior point. Otherwise it's a vertex.
+//       endMin = currentEndMin
+//     } else if (t === intr[0]) {
+//       // Current closest point is a vertex shared by multiple edges. It means
+//       // the endMin and currentMin refer to the same point.
+//       if (endMin === -1 || currentEndMin === -1) throw 'Ooops'
+
+//       const dotPerP = DotPerP()
+//       if (dotPerP > 0) {
+//         v0Min = i
+//         v1Min = j
+//         endMin = currentEndMin
+//       }
+//     }
+
+//     i = j
+//     i++
+//   }
+// }
+
+/**
+ *
+ * @param {Number[][]} outer
+ * @param {Number[][]} inner
+ */
+const combinePolygons = (outer, inners) => {
+  const inner = inners.shift()
+
+  // 1. Find vertex `M` of maximum x-value.
   let xMax = 0
-  vertices.forEach((v, i) => {
+  let index
+  inner.forEach((v, i) => {
     if (v[0] > xMax) {
       xMax = v[0]
       index = i
     }
   })
 
-  // Temporarily does not
-  return [vertices, holes]
+  const m = outer[index]
+  let visible
+
+  // 2. Find the edges that intersect with ray `M + t * (1, 0)`. Let `K` be the
+  // closest visible point to `M` on this ray.
+  let i = outer.length - 1, j = 0
+  let k = []
+  while (j < outer.length) {
+    // Skip edges that does not have their first point below `M` and the second
+    // one above.
+    if (outer[i][1] > m[1] || outer[j][1] < m[1]) continue
+
+    // Calculate simplified intersection of ray (1, 0) and [V_i, V_j] segment.
+    const v1 = [m[0] - a[0], m[1] - a[1]]
+    const v2 = [b[0] - a[0], b[1] - a[1]]
+    const d = v2[1]
+    const t1 = cross(v2, v1) / v2[1]
+    const t2 = v1[1] / v2[1]
+
+    if (t1 >= 0.0 && t2 >= 0.0 && t2 <= 1.0) {
+      if (k === [] || t1 - m[0] < k[0]) k = [t1 + m[0], m[1]]
+    } else {
+      throw 'Cannot calculate intersection, problematic data'
+    }
+
+    i = j
+    j += 1
+  }
+
+  // 3. If `K` is vertex of the outer polygon, `M` and `K` are mutually visible.
+  outer.forEach(v => { if (v[0] === k[0] && v[1] === k[1]) visible = k })
+
+  // 4. Otherwise, `K` is an interior point of the edge `[V_i, V_j]`. Find `P`
+  // which is endpoint with greater x-value.
+  let p = outer[i][0] > outer[j][0] ? outer[i] : outer[j]
+
+  // 5. Check with all vertices of the outer polygon to be outside of the
+  // triangle `[M, K, P]`. If it is true, `M` and `P` are mutually visible.
+  if (outer.map(v => isInsideTriangle(m, k, p)).every()) visible = p
+
+  // 6. Otherwise at least one reflex vertex lies in `[M, K, P]`. Search for the
+  // array of reflex vertices `R` that minimizes the angle between `(1, 0)` and
+  // line segment `[M, R]`. If there is exactly one vertex in `R` then they are
+  // mutually visible. If there are multiple such vertices, pick the one closest
+  // to `M`.
+  visible = outer
+    .filter(v => isInsideTriangle(m, k, p))
+    .filter((v, i) => isReflex(v[cyclic[i - 1]], v[i], v[cyclic[i + 1]]))
+    .sort((v, w) => Vector.squaredDistance(v, m) - Vector.squaredDistance(w, m))
+    .shift()
+
+  if (!visible) throw 'Could not find visible vertex'
+
 }
+
 /**
  * Adds vertices to make triangulation possible using regular ear cut.
- * @param {Number[][]} vertices outer vertices of the polygon
- * @param {Number[][][]} holes array of arrays of vertices forming holes
+ * @param {Number[][]} outer vertices of the outer polygon
+ * @param {Number[][][]} inner array of arrays of vertices forming inner
+ * polygons (holes)
  * @returns {Number[][]} `vertices` array with new vertices added to fix holes
  *
  * **Note:** _Holes should be clock-wise (opposed to CCW polygon) and not nested_
  */
-const eliminateHoles = (vertices, holes) => {
-  let v = vertices // TODO: copy
-  let h = holes // TODO: copy
+const eliminateHoles = (outer, inners) => {
+  debugger
 
+  let h = inners.slice()
+
+  // Sort holes by max x-value.
+  holes = inners.sort((i, j) => j.map(v => v[0]).reduce(max) - i.map(v => v[0]).reduce(max))
+
+  // Merge holes with outer polygon.
   while (h.length > 0) {
-    [_v, _h] = eliminateHole(v, h)
-    v = _v
-    h = _h
+    combinePolygons(outer, h)
   }
 
   return v

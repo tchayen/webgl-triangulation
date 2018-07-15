@@ -9,11 +9,13 @@ import {
   earCut,
 } from '../../src/triangulate/Polygons'
 
-const v = [[50, 110], [150, 30], [240, 115], [320, 65], [395, 170], [305, 160], [265, 240], [190, 100], [95, 125], [100, 215]]
-const c = [0, 1, 3, 4, 6, 9]
-const r = [2, 5, 7, 8]
-const e = [3, 4, 6, 9]
-const t = [[2, 3, 4], [2, 4, 5], [2, 5, 6], [2, 6, 7], [1, 2, 7], [0, 1, 7], [0, 7, 8], [0, 8, 9]]
+const vertices = [[50, 110], [150, 30], [240, 115], [320, 65], [395, 170], [305, 160], [265, 240], [190, 100], [95, 125], [100, 215]]
+const convex = [0, 1, 3, 4, 6, 9]
+const reflex = [2, 5, 7, 8]
+const ears = [3, 4, 6, 9]
+const triangles = [[2, 3, 4], [2, 4, 5], [2, 5, 6], [2, 6, 7], [1, 2, 7], [0, 1, 7], [0, 7, 8], [0, 8, 9]]
+const polygonWithHoles = [[[0, 0], [0, 1]], []] // TODO: finish
+const polygonWithEliminatedHoles = [[0, 0], [0, 1]]
 
 test('cyclic() works as intended', () => {
   expect(cyclic(1, 5)).toBe(1)
@@ -38,6 +40,7 @@ test('sameSide() works as intended', () => {
 })
 
 test('isInsideTriangle() works as intended', () => {
+  const v = vertices
   expect(isInsideTriangle([v[0], v[1], v[2]], v[7])).toBe(true)
   expect(isInsideTriangle([v[0], v[1], v[2]], v[5])).toBe(false)
   expect(isInsideTriangle([v[0], v[1], v[2]], v[5])).toBe(false)
@@ -45,13 +48,17 @@ test('isInsideTriangle() works as intended', () => {
 
 test('splitConvexAndReflex() works as intended', () => {
   expect(splitConvexAndReflex([[0, 0], [2, 3], [4, 2], [0, 7]])).toEqual([[0, 2, 3], [1]])
-  expect(splitConvexAndReflex(v)).toEqual([c, r])
+  expect(splitConvexAndReflex(vertices)).toEqual([convex, reflex])
 })
 
 test('detectEars() works as intended', () => {
-  expect(detectEars(v, r)).toEqual(e)
+  expect(detectEars(vertices, reflex)).toEqual(ears)
 })
 
 test('earCut() works as intended', () => {
-  expect(earCut(v)).toEqual(t)
+  expect(earCut(vertices)).toEqual(triangles)
+})
+
+test('eliminateHoles() works as intended', () => {
+  expect(eliminateHoles(polygonWithHoles)).toEqual(polygonWithEliminatedHoles)
 })

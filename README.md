@@ -1,12 +1,12 @@
-# triangulify
+# triangulate-js-whatever
 
 _because `triangulate` was already taken_
 
-Set of utilities for triangulating **lines** and **polygons** (handles those with multiple holes too).
+Small set of utilities for triangulating **lines** and **polygons**
 
-Aims to offer lightweight (minimal number of external dependencies increasing bundle size, currently there are _none_), production class solution for triangulating relatively big number of vertices.
+**In progress:** _handling those with multiple holes_
 
-Targeted use cases and performance objectives are for rendering maps with rich polygons featuring thousands points. Anything less complicated or similar to that should be doing great with this lib.
+Aims to offer lightweight (minimal number of dependencies, currently _none_) and as universal as possible tool for triangulating data from _maps_ – edge cases will be optimized for that use case.
 
 The lib is everything-agnostic. All calculations are just pure maths, it is suitable both for `node.js` backend and any kind of JS frontend supporting `npm` modules.
 
@@ -16,7 +16,7 @@ yarn add triangulify
 ```
 
 ## Docs
-For documentation, refer to rich JS Doc comments in the code. Feel free to open an issue if some description is not clear _(it was documented on-the-go and some problems might have seem too obvious for the one writing it during that time)._
+For documentation, refer to rich JS Doc comments in the code. Feel free to open an issue if some description is not clear _(it was documented on-the-go and decisions about what to document and what not could be wrong)._
 
 ## Modules
 
@@ -64,3 +64,9 @@ They provide complete, tiny WebGL wrappers for rendering something real on the s
 - triangulation of huge objects – [Lake Superior](https://www.openstreetmap.org/relation/4039486)
 
 - test triangulation with complicated rivers – [Puszcza niepołomicka](https://www.openstreetmap.org/#map=12/47.9571/43.3078)
+
+### Optimizations
+
+- find out bottlenecks
+- maybe use z-order curve / quad tiles to optimize looking for close vertices
+- experiment with using points vs two-element arrays for vertices
