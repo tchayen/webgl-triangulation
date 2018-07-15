@@ -265,7 +265,11 @@ const combinePolygons = (outer, inners) => {
   while (j < outer.length) {
     // Skip edges that does not have their first point below `M` and the second
     // one above.
-    if (outer[i][1] > m[1] || outer[j][1] < m[1]) continue
+    if (outer[i][1] > m[1] || outer[j][1] < m[1]) {
+      i = j
+      j += 1
+      continue
+    }
 
     // Calculate simplified intersection of ray (1, 0) and [V_i, V_j] segment.
     const v1 = [m[0] - a[0], m[1] - a[1]]
