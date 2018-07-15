@@ -274,11 +274,11 @@ const combinePolygons = (outer, inners) => {
     // Calculate simplified intersection of ray (1, 0) and [V_i, V_j] segment.
     const v1 = [m[0] - outer[i][0], m[1] - outer[i][1]]
     const v2 = [outer[j][0] - outer[i][0], outer[j][1] - outer[i][1]]
-    const d = v2[1]
     const t1 = Vector.cross(v2, v1) / v2[1]
     const t2 = v1[1] / v2[1]
 
     if (t1 >= 0.0 && t2 >= 0.0 && t2 <= 1.0) {
+      // If there is no current `k` candidate or this one is closer.
       if (k === [] || t1 - m[0] < k[0]) k = [t1 + m[0], m[1]]
     } else {
       throw 'Cannot calculate intersection, problematic data'
