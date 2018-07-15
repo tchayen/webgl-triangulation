@@ -241,8 +241,6 @@ const detectEars = (v, r, vMap) => {
  * @param {Number[][]} inner
  */
 const combinePolygons = (outer, inners) => {
-  debugger
-
   const inner = inners.shift()
 
   // 1. Find vertex `M` of maximum x-value.
@@ -271,11 +269,13 @@ const combinePolygons = (outer, inners) => {
       continue
     }
 
+    debugger
+
     // Calculate simplified intersection of ray (1, 0) and [V_i, V_j] segment.
-    const v1 = [m[0] - a[0], m[1] - a[1]]
-    const v2 = [b[0] - a[0], b[1] - a[1]]
+    const v1 = [m[0] - outer[i][0], m[1] - outer[i][1]]
+    const v2 = [outer[j][0] - outer[i][0], outer[j][1] - outer[i][1]]
     const d = v2[1]
-    const t1 = cross(v2, v1) / v2[1]
+    const t1 = Vector.cross(v2, v1) / v2[1]
     const t2 = v1[1] / v2[1]
 
     if (t1 >= 0.0 && t2 >= 0.0 && t2 <= 1.0) {
