@@ -118,14 +118,15 @@ const miter = (points, width) => {
 
   // Use last normal as another 'neutral element' for miter join.
   const size = points.length
+  const lastMiter = Vector.scale(normals[1][0], width)
   triangles.push(
-    ...Vector.sub2(points[size - 1], Vector.scale(normals[1][0], width)),
+    ...Vector.sub2(points[size - 1], lastMiter),
     ...Vector.sub2(points[size - 2], miter[1]),
     ...Vector.add2(points[size - 2], miter[1]),
 
     ...Vector.add2(points[size - 2], miter[1]),
-    ...Vector.add2(points[size - 1], Vector.scale(normals[1][0], width)),
-    ...Vector.sub2(points[size - 1], Vector.scale(normals[1][0], width)),
+    ...Vector.add2(points[size - 1], lastMiter),
+    ...Vector.sub2(points[size - 1], lastMiter),
   )
 
   return new Float32Array(triangles)

@@ -137,7 +137,7 @@ const detectEars = (v, r, vMap) => {
   const n = vMap.length
 
   for (let i = 0; i < n; i++) {
-    if (r.indexOf(i) >= 0) continue
+    if (r.indexOf(vMap[i]) >= 0) continue
 
     let isEar = true
     for (let j = 0; j < n; j++) {
@@ -159,81 +159,6 @@ const detectEars = (v, r, vMap) => {
   }
   return ears
 }
-
-// const combinePolygons = (outer, inners) => {
-//   const inner = inners.shift()
-
-//   // Find vertex `M` of maximum x-value.
-//   let xMax = 0
-//   let index
-//   inner.forEach((v, i) => {
-//     if (v[0] > xMax) {
-//       xMax = v[0]
-//       index = i
-//     }
-//   })
-//   const m = outer[index]
-
-//   // Find edge whose intersection with ray `M + t * (1, 0)` minimizes the ray
-//   // parameter t >= 0.
-//   let i = outer.length - 1, j = 0
-//   while (j < outer.length) {
-//     // Consider only edges which have its first vertex below and second above `M`.
-//     const iDiff = [outer[i][0] - m[0], outer[i][1] - m[1]]
-//     const jDiff = [outer[j][0] - m[0], outer[j][1] - m[1]]
-//     if (iDiff[1] > 0 || jDiff[1] < 0) continue
-
-//     let s, t
-//     let v0Min, v1Min
-//     let endMin
-//     let currentEndMin = -1
-//     if (iDiff[1] < 0) {
-//       if (jDiff[1] > 0) {
-//         s = iDiff[1] / (iDiff[1] - jDiff[1])
-//         t = iDiff[0] + s * (jDiff[0] - iDiff[0])
-//       } else { // jDiff[1] === 0
-//         t = jDiff[0]
-//         currentEndMin = j
-//       }
-//     } else { // iDiff[1] === 0
-//       if (jDiff[1] > 0) {
-//         t = iDiff[0]
-//         currentEndMin = i
-//       } else { // jDiff[1] === 0
-//         if (iDiff[0] < jDiff[0]) {
-//           t = iDiff[0]
-//           currentEndMin = i
-//         } else {
-//           t = jDiff[0]
-//           currentEndMin = j
-//         }
-//       }
-//     }
-
-//     if (0 <= t && t < intr[0]) {
-//       intr[0] = t
-//       v0Min = i
-//       v1Min = j
-//       // If `currentEndMin` === -1 then the current closest point is an
-//       // edge-interior point. Otherwise it's a vertex.
-//       endMin = currentEndMin
-//     } else if (t === intr[0]) {
-//       // Current closest point is a vertex shared by multiple edges. It means
-//       // the endMin and currentMin refer to the same point.
-//       if (endMin === -1 || currentEndMin === -1) throw 'Ooops'
-
-//       const dotPerP = DotPerP()
-//       if (dotPerP > 0) {
-//         v0Min = i
-//         v1Min = j
-//         endMin = currentEndMin
-//       }
-//     }
-
-//     i = j
-//     i++
-//   }
-// }
 
 /**
  *
@@ -322,7 +247,7 @@ const combinePolygons = (outer, inner) => {
       ))
       .map((v, i) => [v, i])
       .sort((v, w) => Vector.squaredDistance(v[0], m) - Vector.squaredDistance(w[0], m))
-      .shift()[1]
+      .shift()[0]
   }
 
   if (!visibleIndex) throw 'Could not find visible vertex'

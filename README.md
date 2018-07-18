@@ -1,4 +1,4 @@
-# trngo
+# triangolate
 
 _because `triangulate` was already taken_
 
