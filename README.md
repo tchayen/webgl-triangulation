@@ -1,4 +1,4 @@
-# triangulate-js-whatever
+# trngo
 
 _because `triangulate` was already taken_
 

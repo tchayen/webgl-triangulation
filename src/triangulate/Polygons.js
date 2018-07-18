@@ -240,26 +240,23 @@ const detectEars = (v, r, vMap) => {
  * @param {Number[][]} outer
  * @param {Number[][]} inner
  */
-const combinePolygons = (outer, inners) => {
-  const inner = inners.shift()
-
-  // 1. Find vertex `M` of maximum x-value.
+const combinePolygons = (outer, inner) => {
+  // Find vertex `M` of maximum x-value.
   let xMax = 0
-  let index
+  let mIndex
   inner.forEach((v, i) => {
     if (v[0] > xMax) {
       xMax = v[0]
-      index = i
+      mIndex = i
     }
   })
 
-  const m = inner[index]
-  let visible
+  const m = inner[mIndex]
 
-  // 2. Find the edges that intersect with ray `M + t * (1, 0)`. Let `K` be the
+  // Find the edges that intersect with ray `M + t * (1, 0)`. Let `K` be the
   // closest visible point to `M` on this ray.
   let i = outer.length - 1, j = 0
-  let k = []
+  let k = [], k1, k2
   while (j < outer.length) {
     // Skip edges that does not have their first point below `M` and the second
     // one above.
@@ -269,8 +266,6 @@ const combinePolygons = (outer, inners) => {
       continue
     }
 
-    debugger
-
     // Calculate simplified intersection of ray (1, 0) and [V_i, V_j] segment.
     const v1 = [m[0] - outer[i][0], m[1] - outer[i][1]]
     const v2 = [outer[j][0] - outer[i][0], outer[j][1] - outer[i][1]]
@@ -279,7 +274,11 @@ const combinePolygons = (outer, inners) => {
 
     if (t1 >= 0.0 && t2 >= 0.0 && t2 <= 1.0) {
       // If there is no current `k` candidate or this one is closer.
-      if (k === [] || t1 - m[0] < k[0]) k = [t1 + m[0], m[1]]
+      if (k.length === 0 || t1 - m[0] < k[0]) {
+        k = [t1 + m[0], m[1]]
+        k1 = i
+        k2 = j
+      }
     } else {
       throw 'Cannot calculate intersection, problematic data'
     }
@@ -288,30 +287,54 @@ const combinePolygons = (outer, inners) => {
     j += 1
   }
 
-  // 3. If `K` is vertex of the outer polygon, `M` and `K` are mutually visible.
-  outer.forEach(v => { if (v[0] === k[0] && v[1] === k[1]) visible = k })
+  let visibleIndex
 
-  // 4. Otherwise, `K` is an interior point of the edge `[V_i, V_j]`. Find `P`
+  // If `K` is vertex of the outer polygon, `M` and `K` are mutually visible.
+  outer.forEach((v, i) => { if (v[0] === k[0] && v[1] === k[1]) visibleIndex = i })
+
+  // Otherwise, `K` is an interior point of the edge `[V_k_1, V_k_2]`. Find `P`
   // which is endpoint with greater x-value.
-  let p = outer[i][0] > outer[j][0] ? outer[i] : outer[j]
+  let pIndex = outer[k1][0] > outer[k2][0] ? k1 : k2
 
-  // 5. Check with all vertices of the outer polygon to be outside of the
+  // Check with all vertices of the outer polygon to be outside of the
   // triangle `[M, K, P]`. If it is true, `M` and `P` are mutually visible.
-  if (outer.map(v => isInsideTriangle(m, k, p)).every()) visible = p
+  if (!visibleIndex &&
+    outer
+      .map(v => v === outer[pIndex] || !isInsideTriangle([m, k, outer[pIndex]], v))
+      .every(_ => _)
+  ) {
+    visibleIndex = pIndex
+  }
 
-  // 6. Otherwise at least one reflex vertex lies in `[M, K, P]`. Search for the
+  // Otherwise at least one reflex vertex lies in `[M, K, P]`. Search for the
   // array of reflex vertices `R` that minimizes the angle between `(1, 0)` and
   // line segment `[M, R]`. If there is exactly one vertex in `R` then they are
   // mutually visible. If there are multiple such vertices, pick the one closest
   // to `M`.
-  visible = outer
-    .filter(v => isInsideTriangle(m, k, p))
-    .filter((v, i) => isReflex(v[cyclic[i - 1]], v[i], v[cyclic[i + 1]]))
-    .sort((v, w) => Vector.squaredDistance(v, m) - Vector.squaredDistance(w, m))
-    .shift()
+  if (!visibleIndex) {
+    const n = outer.length
+    visibleIndex = outer
+      .filter(v => isInsideTriangle([m, k, outer[pIndex]], v))
+      .filter((_, i) => isReflex(
+        outer[cyclic(i - 1, n)],
+        outer[i],
+        outer[cyclic(i + 1, n)]
+      ))
+      .map((v, i) => [v, i])
+      .sort((v, w) => Vector.squaredDistance(v[0], m) - Vector.squaredDistance(w[0], m))
+      .shift()[1]
+  }
 
-  if (!visible) throw 'Could not find visible vertex'
+  if (!visibleIndex) throw 'Could not find visible vertex'
 
+  // Add inner polygon's vertices to the outer, together with two virtual for
+  // creating the connection.
+  let l = 0
+  for (; l < inner.length; l++) {
+    outer.splice(visibleIndex + l + 1, 0, inner[cyclic(mIndex + l, inner.length)])
+  }
+  outer.splice(visibleIndex + l + 1, 0, inner[mIndex])
+  outer.splice(visibleIndex + l + 2, 0, outer[visibleIndex])
 }
 
 /**
@@ -324,20 +347,16 @@ const combinePolygons = (outer, inners) => {
  * **Note:** _Holes should be clock-wise (opposed to CCW polygon) and not nested_
  */
 const eliminateHoles = (outer, inners) => {
+  let result = outer.slice()
   let holes = inners.slice()
 
   // Sort holes by max x-value.
-  holes = inners.sort((i, j) =>
+  holes = holes.sort((i, j) =>
     j.map(v => v[0]).reduce((a, b) => Math.max(a, b)) -
     i.map(v => v[0]).reduce((a, b) => Math.max(a, b)))
 
-  combinePolygons(outer, holes)
-
-  // Merge holes with outer polygon.
-  // while (holes.length > 0) {
-  // }
-
-  return outer
+  while (holes.length > 0) combinePolygons(result, holes.shift())
+  return result
 }
 
 /**

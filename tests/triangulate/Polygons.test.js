@@ -7,6 +7,7 @@ import {
   detectEars,
   isReflex,
   earCut,
+  eliminateHoles,
 } from '../../src/triangulate/Polygons'
 
 const vertices = [[50, 110], [150, 30], [240, 115], [320, 65], [395, 170], [305, 160], [265, 240], [190, 100], [95, 125], [100, 215]]
@@ -14,8 +15,18 @@ const convex = [0, 1, 3, 4, 6, 9]
 const reflex = [2, 5, 7, 8]
 const ears = [3, 4, 6, 9]
 const triangles = [[2, 3, 4], [2, 4, 5], [2, 5, 6], [2, 6, 7], [1, 2, 7], [0, 1, 7], [0, 7, 8], [0, 8, 9]]
-const polygonWithHoles = [[[0, 0], [0, 1]], []] // TODO: finish
-const polygonWithEliminatedHoles = [[0, 0], [0, 1]]
+const polygonWithHoles = [
+  [[0, 30], [20, 0], [80, 0], [90, 40], [30, 70]],
+  [
+    [[20, 10], [20, 40], [50, 40]],
+    [[60, 30], [70, 20], [50, 10]],
+  ]]
+const polygonWithEliminatedHoles = [
+  [ 0, 30], [20,  0], [80,  0], [90, 40],
+  [70, 20], [50, 10], [60, 30], [70, 20],
+  [90, 40], [50, 40], [20, 10], [20, 40],
+  [50, 40], [90, 40], [30, 70],
+]
 
 describe('cyclic() works as intended', () => {
   test('Regular index works as identity', () => {
@@ -77,5 +88,7 @@ test('earCut() works as intended', () => {
 })
 
 test('eliminateHoles() works as intended', () => {
-  // expect(eliminateHoles(polygonWithHoles)).toEqual(polygonWithEliminatedHoles)
+  expect(
+    eliminateHoles(polygonWithHoles[0], polygonWithHoles[1]))
+      .toEqual(polygonWithEliminatedHoles)
 })
