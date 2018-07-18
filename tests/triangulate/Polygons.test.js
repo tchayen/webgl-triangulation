@@ -71,7 +71,6 @@ test('isInsideTriangle() works as intended', () => {
   const v = vertices
   expect(isInsideTriangle([v[0], v[1], v[2]], v[7])).toBe(true)
   expect(isInsideTriangle([v[0], v[1], v[2]], v[5])).toBe(false)
-  expect(isInsideTriangle([v[0], v[1], v[2]], v[5])).toBe(false)
 })
 
 test('splitConvexAndReflex() works as intended', () => {
