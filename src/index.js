@@ -40,13 +40,14 @@ Triangulate.Polygons.eliminateHoles(
 
 const linePoints = [[100, 300], [100, 250], [200, 320], [260, 350]]
 
-console.log(Triangulate.Lines.normal(linePoints, 3.0))
+// console.log(Triangulate.Lines.normal(linePoints, 3.0))
 
 const lineTriangles = Triangulate.Lines.miter(linePoints, 10.0)
-const polygonPoints = b//[[50, 110], [150, 30], [240, 115], [320, 65], [395, 170], [305, 160], [265, 240], [190, 100], [95, 125], [100, 215]]
+const polygonPoints = [[50, 110], [150, 30], [240, 115], [320, 65], [395, 170], [305, 160], [265, 240], [190, 100], [95, 125], [100, 215]]
 const triangulatedPolygon = Triangulate.Polygons.earCut(polygonPoints)
 const polygonTriangles = new Float32Array(Triangulate.Polygons.resolveTriangleVertices(polygonPoints, triangulatedPolygon))
 
+debugger
 // console.log(polygonPoints.length, polygonTriangles.length / 6.0)
 
 // ...

@@ -141,7 +141,7 @@ const detectEars = (v, r, vMap) => {
 
     let isEar = true
     for (let j = 0; j < n; j++) {
-      // It is ok to skip reflex vertices and the ones that actually belong to
+      // It is ok to skip convex vertices and the ones that actually belong to
       // the triangle.
       if (
         r.indexOf(j) < 0 ||
