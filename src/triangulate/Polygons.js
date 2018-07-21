@@ -108,7 +108,7 @@ const splitConvexAndReflex = (v, vMap) => {
   const convex = []
   const n = vMap.length
 
-  for (let i = 0; i < vMap.length; i++) {
+  for (let i = 0; i < n; i++) {
     if (isReflex(v[vMap[cyclic(i - 1, n)]], v[vMap[i]], v[vMap[cyclic(i + 1, n)]])) {
       reflex.push(i)
     } else {
@@ -157,6 +157,8 @@ const detectEars = (v, r, vMap) => {
     }
     if (isEar) ears.push(i)
   }
+
+  console.log('ears', ears)
   return ears
 }
 

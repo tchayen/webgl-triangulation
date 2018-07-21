@@ -47,7 +47,8 @@ const polygonPoints = [[50, 110], [150, 30], [240, 115], [320, 65], [395, 170], 
 const triangulatedPolygon = Triangulate.Polygons.earCut(polygonPoints)
 const polygonTriangles = new Float32Array(Triangulate.Polygons.resolveTriangleVertices(polygonPoints, triangulatedPolygon))
 
-debugger
+console.log(triangulatedPolygon)
+console.log(polygonTriangles)
 // console.log(polygonPoints.length, polygonTriangles.length / 6.0)
 
 // ...
