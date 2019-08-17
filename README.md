@@ -1,6 +1,9 @@
-# triangolate
+# WebGL Triangulation
 
-_because `triangulate` was already taken_
+---
+
+> _This lib ended up finished as a Go library – [Triangolatte](https://github.com/tchayen/triangolatte)._
+---
 
 Small set of utilities for triangulating **lines** and **polygons**
 
